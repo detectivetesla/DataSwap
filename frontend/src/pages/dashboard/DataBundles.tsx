@@ -10,12 +10,14 @@ type Step = 1 | 2 | 3;
 
 interface Bundle {
     id: string;
+    network: Network;
     name: string;
     data: string;
     price: number;
     validity: string;
     discount?: number;
     popular?: boolean;
+    is_active?: boolean;
 }
 
 const DataBundles: React.FC = () => {
@@ -52,7 +54,7 @@ const DataBundles: React.FC = () => {
     }, []);
 
     const getBundlesForNetwork = (network: Network): Bundle[] => {
-        return allBundles.filter(b => b.network === network && (b as any).is_active);
+        return allBundles.filter(b => b.network === network && b.is_active !== false);
     };
 
     const networkConfig = {
