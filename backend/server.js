@@ -10,19 +10,32 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const dashboardRoutes = require('./routes/dashboard');
-app.use('/webhooks', webhookRoutes);
-app.use('/auth', authRoutes);
-app.use('/admin', adminRoutes);
-app.use('/dashboard', dashboardRoutes);
+const webhookRoutes = require('./routes/webhooks');
 
 // Health Check
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', message: 'DataSwap Backend is running' });
 });
 
+// API Routes
+const apiRouter = express.Router();
+apiRouter.use('/auth', authRoutes);
+apiRouter.use('/admin', adminRoutes);
+apiRouter.use('/dashboard', dashboardRoutes);
+apiRouter.use('/webhooks', webhookRoutes);
+
+// Support both /api prefix and direct access
+app.use('/api', apiRouter);
+app.use('/', apiRouter);
+
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    server.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
+
+module.exports = app;
