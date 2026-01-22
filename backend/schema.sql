@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     user_id UUID REFERENCES users(id),
     type TEXT NOT NULL, -- 'wallet_funding', 'purchase'
     amount DECIMAL(10, 2) NOT NULL,
-    status TEXT DEFAULT 'pending', -- 'pending', 'success', 'failed'
+    status TEXT DEFAULT 'processing', -- 'processing', 'success', 'failed'
     reference TEXT UNIQUE, -- Paystack or Portal02 reference
     bundle_id UUID REFERENCES bundles(id),
     recipient_phone TEXT,

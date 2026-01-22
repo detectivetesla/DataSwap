@@ -28,7 +28,7 @@ const Dashboard: React.FC = () => {
                 <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsSidebarOpen(false)} />
                 <Sidebar
                     className={cn(
-                        "relative w-72 h-full transition-transform duration-300 transform",
+                        "relative w-64 h-full transition-transform duration-300 transform",
                         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                     )}
                     onClose={() => setIsSidebarOpen(false)}

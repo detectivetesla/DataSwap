@@ -36,7 +36,7 @@ const Transactions: React.FC = () => {
                         </thead>
                         <tbody className="divide-y divide-slate-200 dark:divide-white/5">
                             {[{ id: 1, status: 'Completed', color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' },
-                            { id: 2, status: 'Pending', color: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20' },
+                            { id: 2, status: 'Processing', color: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20' },
                             { id: 3, status: 'Failed', color: 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20' },
                             { id: 4, status: 'Completed', color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' },
                             { id: 5, status: 'Completed', color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' }].map((item) => (

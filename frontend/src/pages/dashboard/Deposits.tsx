@@ -37,7 +37,7 @@ const Deposits: React.FC = () => {
                         </thead>
                         <tbody className="divide-y divide-slate-200 dark:divide-white/5">
                             {[{ id: 1, status: 'Successful', color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' },
-                            { id: 2, status: 'Pending', color: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20' },
+                            { id: 2, status: 'Processing', color: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20' },
                             { id: 3, status: 'Failed', color: 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20' },
                             { id: 4, status: 'Successful', color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' }].map((item) => (
                                 <tr key={item.id} className="hover:bg-slate-100 dark:hover:bg-white/5 transition-colors group">
@@ -46,7 +46,7 @@ const Deposits: React.FC = () => {
                                             <div className={cn(
                                                 "w-10 h-10 rounded-xl flex items-center justify-center",
                                                 item.status === 'Successful' ? "bg-emerald-500/10 text-emerald-600" :
-                                                    item.status === 'Pending' ? "bg-yellow-500/10 text-yellow-600" :
+                                                    item.status === 'Processing' ? "bg-yellow-500/10 text-yellow-600" :
                                                         "bg-red-500/10 text-red-600"
                                             )}>
                                                 <ArrowUpRight className="w-5 h-5" />

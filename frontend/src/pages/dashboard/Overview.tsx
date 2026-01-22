@@ -24,7 +24,7 @@ const Overview: React.FC = () => {
     const stats = [
         { label: 'Wallet Balance', value: 'GH₵ 1,250.00', icon: Wallet, color: 'bg-orange-500', trend: '+12.5%' },
         { label: 'Total Orders', value: '145', icon: ShoppingBag, color: 'bg-emerald-500', trend: '+14' },
-        { label: 'Pending Orders', value: '3', icon: Clock, color: 'bg-blue-500', trend: '-2' },
+        { label: 'Processing Orders', value: '3', icon: Clock, color: 'bg-blue-500', trend: '-2' },
         { label: 'Completed Orders', value: '142', icon: CheckCircle2, color: 'bg-purple-500', trend: '+15' },
     ];
 
@@ -32,10 +32,10 @@ const Overview: React.FC = () => {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Greeting */}
             <div className="mb-6 md:mb-8">
-                <h1 className="text-2xl md:text-3xl font-black text-black dark:text-white mb-1">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-black dark:text-white mb-1">
                     Good Morning, <span className="text-primary">{user?.fullName?.split(' ')[0] || 'Member'}!</span>
                 </h1>
-                <p className="text-sm md:text-base text-slate-700 dark:text-slate-400 font-bold">Here's what's happening with your account today.</p>
+                <p className="text-xs sm:text-sm md:text-base text-slate-700 dark:text-slate-400 font-bold">Here's what's happening today.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -44,18 +44,18 @@ const Overview: React.FC = () => {
                     {/* Stats Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {stats.map((stat, i) => (
-                            <div key={i} className="p-5 md:p-6 rounded-[2rem] bg-white dark:bg-white/5 shadow-sm hover:shadow-md transition-all group border border-slate-100 dark:border-white/10 hover:border-primary/20 relative overflow-hidden">
+                            <div key={i} className="p-4 sm:p-5 md:p-6 rounded-3xl sm:rounded-[2rem] bg-white dark:bg-white/5 shadow-sm hover:shadow-md transition-all group border border-slate-100 dark:border-white/10 hover:border-primary/20 relative overflow-hidden">
                                 <div className="flex justify-between items-start relative z-10">
-                                    <div className="space-y-3 md:space-y-4">
+                                    <div className="space-y-2 sm:space-y-3 md:space-y-4">
                                         <div className={cn(
-                                            "w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center text-white shadow-lg transition-transform group-hover:scale-110",
+                                            "w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center text-white shadow-lg transition-transform group-hover:scale-110",
                                             stat.color
                                         )}>
-                                            <stat.icon className="w-5 h-5 md:w-6 md:h-6" />
+                                            <stat.icon className="w-4 h-4 sm:w-5 h-5 md:w-6 md:h-6" />
                                         </div>
                                         <div>
-                                            <p className="text-2xl md:text-4xl font-black text-black dark:text-white tracking-tight">{stat.value}</p>
-                                            <p className="text-[10px] md:text-sm font-black text-slate-700 dark:text-slate-400 uppercase tracking-widest mt-1">{stat.label}</p>
+                                            <p className="text-xl sm:text-2xl md:text-4xl font-black text-black dark:text-white tracking-tight">{stat.value}</p>
+                                            <p className="text-[10px] sm:text-xs md:text-sm font-black text-slate-700 dark:text-slate-400 uppercase tracking-widest mt-0.5 md:mt-1">{stat.label}</p>
                                         </div>
                                     </div>
                                     <div className="flex flex-col items-end gap-1">
@@ -117,7 +117,7 @@ const Overview: React.FC = () => {
                                 <tbody className="divide-y divide-slate-50 dark:divide-white/5">
                                     {[
                                         { id: '#DS-1024', network: 'MTN', logo: '/logos/mtn.png', bundle: '10GB Monthly', recipient: '0244123456', status: 'Completed', statusColor: 'emerald' },
-                                        { id: '#DS-1025', network: 'Telecel', logo: '/logos/telecel.png', bundle: '5GB Weekly', recipient: '0207894561', status: 'Pending', statusColor: 'yellow' },
+                                        { id: '#DS-1025', network: 'Telecel', logo: '/logos/telecel.png', bundle: '5GB Weekly', recipient: '0207894561', status: 'Processing', statusColor: 'yellow' },
                                         { id: '#DS-1026', network: 'AirtelTigo', logo: '/logos/airteltigo.png', bundle: '2GB Daily', recipient: '0261234567', status: 'Failed', statusColor: 'red' },
                                     ].map((order, i) => (
                                         <tr key={i} className="group hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors">
@@ -219,32 +219,32 @@ const Overview: React.FC = () => {
             </div>
 
             {/* Refined Quick Access / Bottom Bar */}
-            <div className="p-6 md:p-8 rounded-[2.5rem] bg-slate-900 text-white shadow-xl shadow-slate-900/10 relative overflow-hidden group">
+            <div className="p-5 sm:p-6 md:p-8 rounded-3xl sm:rounded-[2.5rem] bg-slate-900 text-white shadow-xl shadow-slate-900/10 relative overflow-hidden group">
                 {/* Background Decoration */}
                 <div className="absolute top-0 right-0 p-12 opacity-5 group-hover:scale-125 transition-transform duration-700 pointer-events-none">
                     <Zap className="w-64 h-64 fill-white" />
                 </div>
 
-                <div className="relative z-10 flex flex-col xl:flex-row items-center justify-between gap-8">
-                    <div className="space-y-4 text-center xl:text-left">
-                        <h3 className="text-2xl md:text-3xl font-black tracking-tight">Quick Actions</h3>
-                        <p className="text-slate-400 text-sm md:text-base font-medium max-w-md">Manage your wallet and orders instantly with our streamlined shortcuts.</p>
+                <div className="relative z-10 flex flex-col xl:flex-row items-center justify-between gap-6 md:gap-8">
+                    <div className="space-y-2 sm:space-y-4 text-center xl:text-left">
+                        <h3 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight">Quick Actions</h3>
+                        <p className="text-slate-400 text-xs sm:text-sm md:text-base font-medium max-w-md">Manage your wallet and orders instantly.</p>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 w-full xl:w-auto">
-                        <button className="flex items-center justify-center gap-3 px-6 md:px-8 py-4 md:py-5 bg-primary text-white rounded-[1.5rem] font-black shadow-lg hover:translate-y-[-2px] active:translate-y-0 transition-all group/btn">
-                            <Plus className="w-5 h-5 transition-transform group-hover/btn:rotate-90" />
-                            <span className="text-sm md:text-base">New Order</span>
+                        <button className="flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 md:px-8 py-3.5 sm:py-4 md:py-5 bg-primary text-white rounded-2xl sm:rounded-[1.5rem] font-black shadow-lg hover:translate-y-[-2px] active:translate-y-0 transition-all group/btn">
+                            <Plus className="w-4 h-4 sm:w-5 h-5 transition-transform group-hover/btn:rotate-90" />
+                            <span className="text-xs sm:text-sm md:text-base">New Order</span>
                         </button>
 
-                        <button className="flex items-center justify-center gap-3 px-6 md:px-8 py-4 md:py-5 bg-white/10 hover:bg-white/20 text-white rounded-[1.5rem] font-black border border-white/10 transition-all hover:translate-y-[-2px] active:translate-y-0">
-                            <Download className="w-5 h-5" />
-                            <span className="text-sm md:text-base">Fund Wallet</span>
+                        <button className="flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 md:px-8 py-3.5 sm:py-4 md:py-5 bg-white/10 hover:bg-white/20 text-white rounded-2xl sm:rounded-[1.5rem] font-black border border-white/10 transition-all hover:translate-y-[-2px] active:translate-y-0">
+                            <Download className="w-4 h-4 sm:w-5 h-5" />
+                            <span className="text-xs sm:text-sm md:text-base">Fund Wallet</span>
                         </button>
 
-                        <button className="flex items-center justify-center gap-3 px-6 md:px-8 py-4 md:py-5 bg-white/5 hover:bg-white/10 text-slate-300 rounded-[1.5rem] font-black border border-white/5 transition-all hover:translate-y-[-2px] active:translate-y-0 sm:col-span-2 lg:col-span-1">
-                            <ArrowLeftRight className="w-5 h-5" />
-                            <span className="text-sm md:text-base">Transactions</span>
+                        <button className="flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 md:px-8 py-3.5 sm:py-4 md:py-5 bg-white/5 hover:bg-white/10 text-slate-300 rounded-2xl sm:rounded-[1.5rem] font-black border border-white/5 transition-all hover:translate-y-[-2px] active:translate-y-0 sm:col-span-2 lg:col-span-1">
+                            <ArrowLeftRight className="w-4 h-4 sm:w-5 h-5" />
+                            <span className="text-xs sm:text-sm md:text-base">Transactions</span>
                         </button>
                     </div>
                 </div>

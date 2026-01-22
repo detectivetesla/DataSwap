@@ -67,7 +67,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ type, onToggle }) => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center p-4 sm:p-6 font-sans relative overflow-hidden">
+        <div className="min-h-screen flex flex-col items-center p-3 sm:p-6 font-sans relative overflow-hidden">
             {/* Background Image */}
             <div className="absolute inset-0 z-0">
                 <img
@@ -79,12 +79,12 @@ const AuthPage: React.FC<AuthPageProps> = ({ type, onToggle }) => {
             </div>
 
             {/* Top Header */}
-            <header className="relative w-full max-w-[1400px] flex items-center justify-between z-20 mb-6 sm:mb-8 md:mb-12">
+            <header className="relative w-full max-w-[1400px] flex items-center justify-between z-20 mb-4 sm:mb-8 md:mb-12">
                 <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigate('/')}>
-                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
-                        <LayoutGrid className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
+                        <LayoutGrid className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                     </div>
-                    <span className="text-lg sm:text-xl font-black text-white tracking-tighter">DataSwap</span>
+                    <span className="text-base sm:text-xl font-black text-white tracking-tighter">DataSwap</span>
                 </div>
 
                 <button className="hidden xs:flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-xs sm:text-sm font-bold text-slate-300">
@@ -94,13 +94,13 @@ const AuthPage: React.FC<AuthPageProps> = ({ type, onToggle }) => {
                 </button>
             </header>
 
-            <div className="relative w-full max-w-[580px] z-10 flex flex-col items-center">
+            <div className="relative w-full max-w-[520px] z-10 flex flex-col items-center">
                 {/* Auth Context Header */}
-                <div className="text-center mb-8 sm:mb-10 md:mb-14 space-y-2 sm:space-y-4 animate-in fade-in slide-in-from-top-4 duration-500 px-4">
-                    <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white tracking-tight">
+                <div className="text-center mb-6 sm:mb-10 md:mb-14 space-y-2 sm:space-y-4 animate-in fade-in slide-in-from-top-4 duration-500 px-4">
+                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight">
                         {type === 'signin' ? 'Sign In' : 'Sign Up'}
                     </h2>
-                    <p className="text-slate-400 text-base sm:text-lg md:text-xl font-medium">
+                    <p className="text-slate-400 text-sm sm:text-lg md:text-xl font-medium">
                         {type === 'signin'
                             ? "Welcome back, you've been missed!"
                             : "Join us and start your journey today!"}
@@ -108,7 +108,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ type, onToggle }) => {
                 </div>
 
                 {/* Auth Card */}
-                <div className="w-full bg-[#1F2937]/90 backdrop-blur-3xl rounded-[2rem] p-8 sm:p-10 md:p-12 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.8)] border border-white/5 relative overflow-hidden animate-in fade-in zoom-in-95 duration-700">
+                <div className="w-full bg-[#1F2937]/90 backdrop-blur-3xl rounded-3xl sm:rounded-[2rem] p-6 sm:p-10 md:p-12 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.8)] border border-white/5 relative overflow-hidden animate-in fade-in zoom-in-95 duration-700">
 
                     {successMsg && (
                         <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[90%] bg-emerald-500/10 border border-emerald-500/20 py-2 sm:py-3 rounded-xl text-center text-xs font-bold text-emerald-400 px-4 animate-in slide-in-from-top-2">

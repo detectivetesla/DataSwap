@@ -9,7 +9,11 @@ import {
 import { cn } from '@/utils/cn';
 import { useAuth } from '@/context/AuthContext';
 
-const AdminSidebar: React.FC = () => {
+interface AdminSidebarProps {
+    className?: string;
+}
+
+const AdminSidebar: React.FC<AdminSidebarProps> = ({ className }) => {
     const { logout } = useAuth();
 
     const sections = [
@@ -53,7 +57,7 @@ const AdminSidebar: React.FC = () => {
     ];
 
     return (
-        <aside className="w-72 bg-white dark:bg-[#0B0F19] border-r border-slate-100 dark:border-white/5 flex flex-col fixed inset-y-0 z-50">
+        <aside className={cn("w-72 bg-white dark:bg-[#0B0F19] border-r border-slate-100 dark:border-white/5 flex flex-col fixed inset-y-0 z-[70]", className)}>
             {/* Branding Section */}
             <div className="p-8 pb-4">
                 <Link to="/admin" className="flex items-center gap-3 group">

@@ -71,8 +71,8 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onClose, isCollapsed }) =>
                         onClick={onClose}
                         title={isCollapsed ? item.label : undefined}
                         className={({ isActive }) => cn(
-                            "flex items-center px-6 py-4 rounded-3xl transition-all duration-300 group relative",
-                            isCollapsed ? "justify-center px-0 w-12 h-12 mx-auto rounded-xl" : "justify-between",
+                            "flex items-center px-4 py-3 rounded-2xl transition-all duration-300 group relative",
+                            isCollapsed ? "justify-center px-0 w-11 h-11 mx-auto rounded-xl" : "justify-between",
                             isActive
                                 ? "bg-primary/10 text-primary font-black shadow-sm"
                                 : "text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/5"
@@ -105,8 +105,8 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onClose, isCollapsed }) =>
             <div className={cn("mt-auto p-6 space-y-4 pt-12", isCollapsed && "px-4 space-y-4 pt-12")}>
                 {/* User Profile */}
                 <div className={cn(
-                    "flex items-center justify-between group cursor-pointer rounded-3xl bg-slate-50 dark:bg-white/5 border border-transparent hover:border-primary/10 transition-all mb-6",
-                    isCollapsed ? "flex-col p-2 gap-4 bg-transparent border-none" : "p-4"
+                    "flex items-center justify-between group cursor-pointer rounded-2xl bg-slate-50 dark:bg-white/5 border border-transparent hover:border-primary/10 transition-all mb-4",
+                    isCollapsed ? "flex-col p-2 gap-4 bg-transparent border-none" : "p-3"
                 )}>
                     <div className={cn("flex items-center gap-3 min-w-0", isCollapsed && "flex-col")}>
                         <div className="w-12 h-12 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-primary font-bold overflow-hidden shrink-0">
@@ -138,8 +138,8 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onClose, isCollapsed }) =>
                     onClick={logout}
                     title={isCollapsed ? "Logout" : undefined}
                     className={cn(
-                        "flex items-center rounded-3xl text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all font-bold group",
-                        isCollapsed ? "justify-center w-12 h-12 mx-auto rounded-xl" : "w-full gap-3 px-6 py-4"
+                        "flex items-center rounded-2xl text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all font-bold group",
+                        isCollapsed ? "justify-center w-11 h-11 mx-auto rounded-xl" : "w-full gap-3 px-5 py-3"
                     )}
                 >
                     <LogOut className={cn("w-5 h-5 transition-transform group-hover:-translate-x-1", isCollapsed && "group-hover:-translate-x-0 group-hover:scale-110")} />

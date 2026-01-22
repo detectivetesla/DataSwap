@@ -98,7 +98,7 @@ const Wallet: React.FC = () => {
 
                         <div className="space-y-4">
                             {[{ id: 1, status: 'Success', color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' },
-                            { id: 2, status: 'Pending', color: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20' },
+                            { id: 2, status: 'Processing', color: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20' },
                             { id: 3, status: 'Failed', color: 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20' },
                             { id: 4, status: 'Success', color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' },
                             { id: 5, status: 'Success', color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' }].map((item) => (
@@ -107,7 +107,7 @@ const Wallet: React.FC = () => {
                                         <div className={cn(
                                             "w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform",
                                             item.status === 'Success' ? "bg-emerald-500/10 text-emerald-500" :
-                                                item.status === 'Pending' ? "bg-yellow-500/10 text-yellow-500" :
+                                                item.status === 'Processing' ? "bg-yellow-500/10 text-yellow-500" :
                                                     "bg-red-500/10 text-red-500"
                                         )}>
                                             <ArrowUpRight className="w-5 h-5" />
