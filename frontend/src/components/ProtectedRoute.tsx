@@ -22,7 +22,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
 
     if (!isAuthenticated) {
         // Redirect to login but save the current location they were trying to go to
-        const loginPath = location.pathname.startsWith('/admin') ? '/admin/login' : '/auth';
+        const loginPath = location.pathname.startsWith('/admin') ? '/admin/login' : '/login';
         return <Navigate to={loginPath} state={{ from: location }} replace />;
     }
 

@@ -55,6 +55,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ type, onToggle }) => {
                     phoneNumber: `${countryCode}${formData.phoneNumber}`
                 });
                 setSuccessMsg('Account created! Please login to continue.');
+                setFormData(prev => ({ ...prev, password: '' }));
                 setTimeout(() => onToggle(), 2000);
             } else {
                 const response = await api.post('/auth/login', {
@@ -263,17 +264,20 @@ const AuthPage: React.FC<AuthPageProps> = ({ type, onToggle }) => {
 
                         {type === 'signup' && (
                             <div className="px-1">
-                                <label className="flex items-start gap-2 cursor-pointer group">
+                                <div
+                                    className="flex items-start gap-2 cursor-pointer group"
+                                    onClick={() => setFormData({ ...formData, agreedToTerms: !formData.agreedToTerms })}
+                                >
                                     <div className={cn(
                                         "w-4 h-4 rounded border border-white/10 flex items-center justify-center transition-all mt-0.5 shrink-0",
                                         formData.agreedToTerms ? "bg-primary border-primary" : "bg-white/5"
-                                    )} onClick={() => setFormData({ ...formData, agreedToTerms: !formData.agreedToTerms })}>
+                                    )}>
                                         {formData.agreedToTerms && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
                                     </div>
                                     <span className="text-xs font-medium text-slate-400 group-hover:text-slate-300 transition-colors">
                                         I agree to the <button type="button" className="text-primary hover:underline" onClick={(e) => { e.stopPropagation(); navigate('/terms'); }}>Terms of Service</button> and <button type="button" className="text-primary hover:underline" onClick={(e) => { e.stopPropagation(); navigate('/privacy'); }}>Privacy Policy</button>
                                     </span>
-                                </label>
+                                </div>
                             </div>
                         )}
 
