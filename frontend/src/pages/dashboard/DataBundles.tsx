@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Wallet, Grid3x3, List, CheckCircle2, Loader2, XCircle } from 'lucide-react';
 import axios from 'axios';
+import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/utils/cn';
 import Button from '@/components/Button';
@@ -37,7 +38,7 @@ const DataBundles: React.FC = () => {
     React.useEffect(() => {
         const fetchBundles = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/admin/bundles');
+                const response = await api.get('/admin/bundles');
                 // Map API price_ghc to price field
                 const formattedBundles = response.data.bundles.map((b: any) => ({
                     ...b,
@@ -106,12 +107,9 @@ const DataBundles: React.FC = () => {
         setMessage(null);
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post('http://localhost:5000/dashboard/purchase', {
+            const response = await api.post('/dashboard/purchase', {
                 bundleId: selectedBundle.id,
                 phone: phoneNumber
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
             });
 
             setMessage({ type: 'success', text: response.data.message });

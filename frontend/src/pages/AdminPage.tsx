@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import api from '@/utils/api';
 import { cn } from '@/utils/cn';
 import { useAuth } from '@/context/AuthContext';
 
@@ -25,12 +26,9 @@ const AdminPage: React.FC = () => {
     useEffect(() => {
         const fetchAdminData = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const headers = { Authorization: `Bearer ${token}` };
-
                 const [statsRes, dataRes] = await Promise.all([
-                    axios.get('http://localhost:5000/admin/stats', { headers }),
-                    axios.get('http://localhost:5000/admin/recent-data', { headers })
+                    api.get('/admin/stats'),
+                    api.get('/admin/recent-data')
                 ]);
 
                 setStatsData(statsRes.data);

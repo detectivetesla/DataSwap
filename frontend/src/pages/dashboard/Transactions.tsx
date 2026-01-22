@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeftRight, ArrowUpRight, ArrowDownLeft, Search } from 'lucide-react';
 import axios from 'axios';
+import api from '@/utils/api';
 import { cn } from '@/utils/cn';
 
 const Transactions: React.FC = () => {
@@ -11,10 +12,7 @@ const Transactions: React.FC = () => {
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:5000/dashboard/transactions', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const response = await api.get('/dashboard/transactions');
                 setTransactions(response.data.transactions);
             } catch (error) {
                 console.error('Failed to fetch transactions', error);

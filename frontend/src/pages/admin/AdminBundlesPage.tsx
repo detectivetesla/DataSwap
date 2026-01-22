@@ -5,6 +5,7 @@ import {
     Briefcase, Globe, Activity
 } from 'lucide-react';
 import axios from 'axios';
+import api from '@/utils/api';
 import { cn } from '@/utils/cn';
 
 interface Bundle {
@@ -31,7 +32,7 @@ const AdminBundlesPage: React.FC = () => {
     const fetchBundles = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:5000/admin/bundles');
+            const response = await api.get('/admin/bundles');
             setBundles(response.data.bundles);
         } catch (error) {
             console.error('Failed to fetch bundles', error);
@@ -43,9 +44,7 @@ const AdminBundlesPage: React.FC = () => {
     const handleDelete = async (id: string) => {
         if (!window.confirm('Are you sure you want to delete this bundle?')) return;
         try {
-            await axios.delete(`http://localhost:5000/admin/bundles/${id}`, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-            });
+            await api.delete(`/admin/bundles/${id}`);
             setBundles(bundles.filter(b => b.id !== id));
         } catch (error) {
             alert('Failed to delete bundle');
@@ -54,9 +53,7 @@ const AdminBundlesPage: React.FC = () => {
 
     const toggleStatus = async (id: string) => {
         try {
-            const response = await axios.post(`http://localhost:5000/admin/bundles/${id}/toggle`, {}, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-            });
+            const response = await api.post(`/admin/bundles/${id}/toggle`, {});
             setBundles(bundles.map(b => b.id === id ? { ...b, is_active: response.data.is_active } : b));
         } catch (error) {
             alert('Failed to toggle status');
@@ -70,13 +67,9 @@ const AdminBundlesPage: React.FC = () => {
 
         try {
             if (editingBundle) {
-                await axios.put(`http://localhost:5000/admin/bundles/${editingBundle.id}`, data, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-                });
+                await api.put(`/admin/bundles/${editingBundle.id}`, data);
             } else {
-                await axios.post('http://localhost:5000/admin/bundles', data, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-                });
+                await api.post('/admin/bundles', data);
             }
             setIsModalOpen(false);
             fetchBundles();

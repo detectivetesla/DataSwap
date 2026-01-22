@@ -7,7 +7,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
     console.warn('Supabase credentials missing. Realtime features will be disabled.');
 }
 
-export const supabase = createClient(
-    supabaseUrl || '',
-    supabaseAnonKey || ''
-);
+export const supabase = (supabaseUrl && supabaseAnonKey)
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
+

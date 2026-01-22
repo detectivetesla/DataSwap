@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Search, Filter, ChevronRight } from 'lucide-react';
 import axios from 'axios';
+import api from '@/utils/api';
 import { cn } from '@/utils/cn';
 
 const Orders: React.FC = () => {
@@ -11,10 +12,7 @@ const Orders: React.FC = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:5000/dashboard/orders', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const response = await api.get('/dashboard/orders');
                 setOrders(response.data.orders);
             } catch (error) {
                 console.error('Failed to fetch orders', error);

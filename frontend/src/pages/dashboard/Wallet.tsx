@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { Wallet as WalletIcon, Plus, ArrowUpRight, ArrowDownLeft, CreditCard, Landmark, Download } from 'lucide-react';
 import axios from 'axios';
+import api from '@/utils/api';
 import { cn } from '@/utils/cn';
 import Button from '@/components/Button';
 import { useAuth } from '@/context/AuthContext';
@@ -14,10 +15,7 @@ const Wallet: React.FC = () => {
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:5000/dashboard/transactions', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const response = await api.get('/dashboard/transactions');
                 setTransactions(response.data.transactions);
             } catch (error) {
                 console.error('Failed to fetch transactions', error);

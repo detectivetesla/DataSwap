@@ -5,6 +5,7 @@ import {
     CheckCircle2, XCircle, Edit, Save, X
 } from 'lucide-react';
 import axios from 'axios';
+import api from '@/utils/api';
 import { cn } from '@/utils/cn';
 import Button from '@/components/Button';
 
@@ -32,9 +33,7 @@ const AdminUsersPage: React.FC = () => {
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:5000/admin/users', {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-            });
+            const response = await api.get('/admin/users');
             // Ensure status property exists for UI
             const usersWithStatus = response.data.users.map((u: any) => ({
                 ...u,
@@ -51,9 +50,7 @@ const AdminUsersPage: React.FC = () => {
     const handleDelete = async (id: string) => {
         if (!window.confirm('Are you sure you want to permanently delete this user?')) return;
         try {
-            await axios.delete(`http://localhost:5000/admin/users/${id}`, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-            });
+            await api.delete(`/admin/users/${id}`);
             setUsers(users.filter(u => u.id !== id));
         } catch (error) {
             alert('Failed to delete user');
@@ -68,14 +65,10 @@ const AdminUsersPage: React.FC = () => {
         try {
             if (editingUser) {
                 // Update existing
-                await axios.put(`http://localhost:5000/admin/users/${editingUser.id}`, data, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-                });
+                await api.put(`/admin/users/${editingUser.id}`, data);
             } else {
                 // Create new
-                await axios.post('http://localhost:5000/admin/users', data, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-                });
+                await api.post('/admin/users', data);
             }
             setIsModalOpen(false);
             fetchUsers();

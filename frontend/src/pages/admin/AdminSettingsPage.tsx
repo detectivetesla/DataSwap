@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import api from '@/utils/api';
 import {
     Settings, AlertCircle, Save, Power,
     Bell, Shield, Monitor, Layout,
@@ -20,12 +21,8 @@ const AdminSettingsPage: React.FC = () => {
     }, []);
 
     const fetchSettings = async () => {
-        setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:5000/admin/settings', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.get('/admin/settings');
             const settings = response.data.settings;
             setMaintenance(settings.maintenance_mode === 'true');
             setPublicRegistration(settings.public_registration === 'true');
@@ -40,11 +37,7 @@ const AdminSettingsPage: React.FC = () => {
         setSaving(true);
         setMessage(null);
         try {
-            const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5000/admin/settings',
-                { key, value },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await api.post('/admin/settings', { key, value });
             setMessage({ type: 'success', text: 'Settings synchronized successfully!' });
             setTimeout(() => setMessage(null), 3000);
         } catch (error) {

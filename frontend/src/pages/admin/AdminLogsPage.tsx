@@ -8,6 +8,7 @@ import {
 import { cn } from '@/utils/cn';
 
 import axios from 'axios';
+import api from '@/utils/api';
 
 const AdminLogsPage: React.FC = () => {
     const [filter, setFilter] = useState('all');
@@ -22,10 +23,7 @@ const AdminLogsPage: React.FC = () => {
     const fetchLogs = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:5000/admin/logs', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.get('/admin/logs');
             setLogs(response.data.logs);
         } catch (error) {
             console.error('Failed to fetch logs', error);
@@ -38,10 +36,7 @@ const AdminLogsPage: React.FC = () => {
         if (!confirm('Are you sure you want to purge all system logs? This action cannot be undone.')) return;
 
         try {
-            const token = localStorage.getItem('token');
-            await axios.delete('http://localhost:5000/admin/logs/purge', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.delete('/admin/logs/purge');
             setLogs([]);
         } catch (error) {
             console.error('Failed to purge logs', error);

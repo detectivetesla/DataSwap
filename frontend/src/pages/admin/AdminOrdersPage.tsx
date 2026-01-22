@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import axios from 'axios';
+import api from '@/utils/api';
 import { supabase } from '@/utils/supabase';
 
 const AdminOrdersPage: React.FC = () => {
@@ -19,27 +20,27 @@ const AdminOrdersPage: React.FC = () => {
         fetchOrders();
 
         // Supabase Realtime Listener
-        const channel = supabase
-            .channel('admin-orders-updates')
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'orders' },
-                () => fetchOrders()
-            )
-            .subscribe();
+        let channel: any = null;
+        if (supabase) {
+            channel = supabase
+                .channel('admin-orders-updates')
+                .on(
+                    'postgres_changes',
+                    { event: '*', schema: 'public', table: 'orders' },
+                    () => fetchOrders()
+                )
+                .subscribe();
+        }
 
         return () => {
-            supabase.removeChannel(channel);
+            if (channel) supabase?.removeChannel(channel);
         };
     }, []);
 
     const fetchOrders = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:5000/admin/orders', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.get('/admin/orders');
             setOrders(response.data.orders);
         } catch (error) {
             console.error('Failed to fetch orders', error);
