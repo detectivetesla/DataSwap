@@ -8,12 +8,13 @@ const paystackService = {
     /**
      * Initialize a payment transaction
      */
-    initializeTransaction: async (email, amount) => {
+    initializeTransaction: async (email, amount, metadata = {}) => {
         try {
             const response = await axios.post(`${PAYSTACK_BASE_URL}/transaction/initialize`, {
                 email,
-                amount: amount * 100, // Paystack expects amount in pesewas
-                callback_url: `${process.env.FRONTEND_URL}/payment-callback`
+                amount: Math.round(amount * 100), // Paystack expects amount in pesewas
+                callback_url: `${process.env.FRONTEND_URL}/dashboard/wallet`,
+                metadata
             }, {
                 headers: { 'Authorization': `Bearer ${process.env.PAYSTACK_SECRET_KEY}` }
             });

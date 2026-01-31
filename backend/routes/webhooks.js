@@ -1,14 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
-// Load db pool here if available
+const db = require('../db');
 
 // Middleware to verify Paystack signature
 const verifyPaystackSignature = (req, res, next) => {
-    const hash = crypto.createHmac('sha512', process.env.PAYSTACK_SECRET_KEY).update(JSON.stringify(req.body)).digest('hex');
+    if (!process.env.PAYSTACK_SECRET_KEY) {
+        console.error('PAYSTACK_SECRET_KEY is not set');
+        return res.sendStatus(500);
+    }
+    const hash = crypto.createHmac('sha512', process.env.PAYSTACK_SECRET_KEY)
+        .update(JSON.stringify(req.body))
+        .digest('hex');
     if (hash === req.headers['x-paystack-signature']) {
         next();
     } else {
+        console.warn('Invalid Paystack signature');
         res.sendStatus(400);
     }
 };
@@ -18,9 +25,51 @@ router.post('/paystack', verifyPaystackSignature, async (req, res) => {
     const event = req.body;
 
     if (event.event === 'charge.success') {
-        const { reference, amount, customer } = event.data;
-        console.log(`Payment success: ${reference}, Amount: ${amount / 100}`);
-        // TODO: Update user wallet or order status in DB
+        const { reference, metadata } = event.data;
+        const userId = metadata?.user_id;
+        const requestedAmount = metadata?.requested_amount;
+
+        console.log(`Payment success: ${reference}, User: ${userId}, Amount: ${requestedAmount}`);
+
+        if (userId && requestedAmount) {
+            try {
+                // Use a transaction for consistency
+                await db.pool.connect().then(async (client) => {
+                    try {
+                        await client.query('BEGIN');
+
+                        // Check if transaction already processed
+                        const checkTx = await client.query('SELECT status FROM transactions WHERE reference = $1', [reference]);
+                        if (checkTx.rows.length > 0 && checkTx.rows[0].status === 'success') {
+                            await client.query('COMMIT');
+                            return;
+                        }
+
+                        // Update wallet
+                        await client.query(
+                            'UPDATE users SET wallet_balance = wallet_balance + $1 WHERE id = $2',
+                            [requestedAmount, userId]
+                        );
+
+                        // Update transaction status
+                        await client.query(
+                            'UPDATE transactions SET status = $1 WHERE reference = $2',
+                            ['success', reference]
+                        );
+
+                        await client.query('COMMIT');
+                    } catch (e) {
+                        await client.query('ROLLBACK');
+                        throw e;
+                    } finally {
+                        client.release();
+                    }
+                });
+            } catch (error) {
+                console.error('Webhook processing error:', error);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+        }
     }
 
     res.sendStatus(200);

@@ -26,6 +26,12 @@ router.post('/register', async (req, res) => {
     try {
         const { email, password, fullName, phoneNumber } = req.body;
 
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+            return res.status(400).json({ message: 'Please provide a valid email address' });
+        }
+
         // Check if user exists
         const userExists = await db.query('SELECT * FROM users WHERE email = $1', [email]);
         if (userExists.rows.length > 0) {
