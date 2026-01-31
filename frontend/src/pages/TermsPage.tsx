@@ -1,5 +1,6 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
+import { APP_CONFIG } from '@/config/constants';
 
 const TermsPage: React.FC = () => {
     return (
@@ -10,7 +11,7 @@ const TermsPage: React.FC = () => {
                 <div className="prose prose-invert text-slate-400 space-y-4">
                     <p>Last updated: January 2026</p>
                     <h2 className="text-xl font-bold text-white">1. Acceptance of Terms</h2>
-                    <p>By accessing and using EmWeb, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
+                    <p>By accessing and using {APP_CONFIG.SYSTEM_NAME}, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
 
                     <h2 className="text-xl font-bold text-white">2. Use of Service</h2>
                     <p>You must be at least 18 years old to use our service. You are responsible for maintaining the confidentiality of your account credentials.</p>

@@ -6,6 +6,7 @@ import api from '@/utils/api';
 import { cn } from '@/utils/cn';
 import Button from '@/components/Button';
 import { useAuth } from '@/context/AuthContext';
+import { APP_CONFIG } from '@/config/constants';
 
 const Wallet: React.FC = () => {
     const { user } = useAuth();
@@ -30,8 +31,8 @@ const Wallet: React.FC = () => {
     }, []);
 
     const handleDeposit = async () => {
-        if (!amount || Number(amount) < 5) {
-            alert('Minimum deposit amount is GH₵ 5.00');
+        if (!amount || Number(amount) < APP_CONFIG.MIN_DEPOSIT_GHC) {
+            alert(`Minimum deposit amount is ${APP_CONFIG.CURRENCY} ${APP_CONFIG.MIN_DEPOSIT_GHC.toFixed(2)}`);
             return;
         }
 
@@ -50,7 +51,7 @@ const Wallet: React.FC = () => {
         }
     };
 
-    const fee = amount ? (Number(amount) * 0.02).toFixed(2) : '0.00';
+    const fee = amount ? (Number(amount) * APP_CONFIG.TRANSACTION_FEE_PERCENTAGE).toFixed(2) : '0.00';
     const total = amount ? (Number(amount) + Number(fee)).toFixed(2) : '0.00';
 
     return (
@@ -120,21 +121,21 @@ const Wallet: React.FC = () => {
                             {/* Amount Input Second */}
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end">
-                                    <label className="text-xs font-black text-slate-400 dark:text-slate-600 ml-1 uppercase tracking-widest">Amount to Deposit (Min GH₵ 5.00)</label>
+                                    <label className="text-xs font-black text-slate-400 dark:text-slate-600 ml-1 uppercase tracking-widest">Amount to Deposit (Min {APP_CONFIG.CURRENCY} {APP_CONFIG.MIN_DEPOSIT_GHC.toFixed(2)})</label>
                                     <div className="text-right">
-                                        <p className="text-[10px] font-bold text-slate-500 tracking-tighter italic">2% Processing Fee: GH₵ {fee}</p>
-                                        <p className="text-[10px] font-black text-primary tracking-tighter uppercase">Total: GH₵ {total}</p>
+                                        <p className="text-[10px] font-bold text-slate-500 tracking-tighter italic">{(APP_CONFIG.TRANSACTION_FEE_PERCENTAGE * 100)}% Processing Fee: {APP_CONFIG.CURRENCY_SYMBOL} {fee}</p>
+                                        <p className="text-[10px] font-black text-primary tracking-tighter uppercase">Total: {APP_CONFIG.CURRENCY_SYMBOL} {total}</p>
                                     </div>
                                 </div>
                                 <div className="relative">
                                     <input
                                         type="number"
-                                        placeholder="5.00"
+                                        placeholder={APP_CONFIG.MIN_DEPOSIT_GHC.toFixed(2)}
                                         value={amount}
                                         onChange={(e) => setAmount(e.target.value)}
                                         className="w-full px-10 py-6 rounded-[1.5rem] bg-white dark:bg-black/20 border border-slate-200 dark:border-white/5 focus:border-slate-400 dark:focus:border-primary outline-none transition-all text-4xl font-black text-black dark:text-white shadow-inner"
                                     />
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-700 font-bold text-xl">₵</div>
+                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-700 font-bold text-xl">{APP_CONFIG.CURRENCY_SYMBOL}</div>
                                 </div>
                             </div>
 

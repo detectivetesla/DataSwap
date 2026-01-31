@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/utils/cn';
 import Button from '@/components/Button';
 
-type Network = 'MTN' | 'Telecel' | 'AirtelTigo';
+type Network = 'MTN' | 'Telecel' | 'AT';
 type PurchaseMode = 'normal' | 'grid';
 type Step = 1 | 2 | 3;
 
@@ -44,7 +44,7 @@ const DataBundles: React.FC = () => {
                     ...b,
                     price: Number(b.price_ghc),
                     data: b.data_amount,
-                    validity: '30 Days' // Default validity
+                    validity: `${b.validity_days || 30} Days`
                 }));
                 setAllBundles(formattedBundles);
             } catch (error) {
@@ -79,12 +79,12 @@ const DataBundles: React.FC = () => {
             discount: 'Up to 20% off',
             logo: '/logos/telecel.png',
         },
-        AirtelTigo: {
-            color: 'bg-[#003876]',
-            borderColor: 'border-[#003876]',
-            textColor: 'text-[#003876]',
-            hoverBg: 'hover:bg-[#003876]/5',
-            focusRing: 'focus:ring-[#003876]/20',
+        AT: {
+            color: 'bg-blue-600',
+            borderColor: 'border-blue-500',
+            textColor: 'text-blue-600',
+            hoverBg: 'hover:bg-blue-500/5',
+            focusRing: 'focus:ring-blue-500/20',
             discount: 'Up to 30% off',
             logo: '/logos/airteltigo.png',
         },
@@ -208,23 +208,24 @@ const DataBundles: React.FC = () => {
                             key={network}
                             onClick={() => handleNetworkSelect(network)}
                             className={cn(
-                                'relative p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-white dark:bg-white/[0.02] border-2 transition-all group',
-                                'hover:scale-[1.02] hover:shadow-2xl active:scale-[0.98]',
-                                config.borderColor,
-                                config.hoverBg
+                                'relative p-10 rounded-[3rem] bg-white dark:bg-white/[0.02] border border-slate-100 dark:border-white/5 transition-all group overflow-hidden',
+                                'hover:translate-y-[-8px] hover:shadow-2xl hover:shadow-slate-200/50 dark:hover:shadow-black/50 active:scale-[0.98]'
                             )}
                         >
+                            <div className="absolute top-0 right-0 p-10 opacity-0 group-hover:opacity-5 transition-all duration-700">
+                                <div className={cn('w-40 h-40 rounded-full blur-3xl', config.color)} />
+                            </div>
                             <div className="flex flex-col items-center gap-3 sm:gap-4">
-                                <div className={cn('w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center', config.color)}>
-                                    <img src={config.logo} alt={network} className="w-10 h-10 sm:w-14 sm:h-14 object-contain" />
+                                <div className={cn('w-20 h-20 sm:w-24 sm:h-24 rounded-3xl flex items-center justify-center shadow-lg', config.color)}>
+                                    <img src={config.logo} alt={network} className="w-12 h-12 sm:w-16 sm:h-16 object-contain" />
                                 </div>
                                 <div className="text-center">
-                                    <h3 className="text-lg sm:text-xl font-black text-black dark:text-white mb-1">
-                                        {network}
+                                    <h3 className="text-xl sm:text-2xl font-black text-black dark:text-white mb-2 tracking-tight">
+                                        {network} Packages
                                     </h3>
-                                    <p className={cn('text-xs sm:text-sm font-bold', config.textColor)}>
+                                    <div className={cn('px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-[0.2em] inline-block mb-1', config.color, 'text-black dark:text-slate-900 shadow-sm')}>
                                         {config.discount}
-                                    </p>
+                                    </div>
                                 </div>
                             </div>
                         </button>
@@ -332,43 +333,36 @@ const DataBundles: React.FC = () => {
                             key={bundle.id}
                             onClick={() => handleBundleSelect(bundle)}
                             className={cn(
-                                'relative p-6 rounded-2xl bg-white dark:bg-white/[0.02] border-2 transition-all text-left group',
-                                'hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]',
-                                'border-slate-200 dark:border-white/10',
-                                config.hoverBg
+                                'relative p-6 rounded-[2rem] bg-white dark:bg-white/[0.02] border border-slate-100 dark:border-white/5 transition-all text-left overflow-hidden group',
+                                'hover:translate-y-[-4px] hover:shadow-xl active:scale-[0.98]'
                             )}
                         >
-                            {bundle.popular && (
-                                <div className="absolute -top-2 -right-2 px-3 py-1 rounded-full bg-primary text-white text-xs font-black shadow-lg">
-                                    POPULAR
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center shadow-sm', config.color)}>
+                                    <img src={config.logo} alt={selectedNetwork} className="w-5 h-5 object-contain" />
                                 </div>
-                            )}
-                            <div className={cn('inline-flex px-3 py-1 rounded-lg mb-3 text-xs font-black', config.color, 'text-black')}>
-                                {selectedNetwork}
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{selectedNetwork}</span>
                             </div>
-                            <div className="space-y-2">
-                                <h4 className="text-2xl font-black text-black dark:text-white">{bundle.data}</h4>
-                                <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">{bundle.validity}</p>
-                                <div className="flex items-baseline gap-2">
-                                    <span className={cn('text-xl font-black', config.textColor)}>
-                                        GH₵ {bundle.price.toFixed(2)}
-                                    </span>
-                                    {bundle.discount && (
-                                        <span className="text-xs text-slate-500 line-through">
-                                            GH₵ {(bundle.price + bundle.discount).toFixed(2)}
-                                        </span>
-                                    )}
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <h4 className="text-3xl font-black text-black dark:text-white tracking-tighter">{bundle.data}</h4>
+                                    <div className="text-right">
+                                        <div className="text-[10px] font-black text-slate-400 mb-0.5 uppercase tracking-widest leading-none">Price</div>
+                                        <div className="text-xl font-black text-black dark:text-white tracking-tight">₵{bundle.price.toFixed(2)}</div>
+                                    </div>
                                 </div>
-                                {bundle.discount && (
-                                    <p className="text-xs font-bold text-primary">
-                                        ✓ Save GH₵ {bundle.discount.toFixed(2)}
-                                    </p>
-                                )}
+                                <div className="pt-4 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-[10px] font-bold text-slate-500 font-mono">
+                                    <div className="flex items-center gap-1.5 uppercase tracking-widest">
+                                        <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                                        <span>Instant</span>
+                                    </div>
+                                    <span className="uppercase tracking-widest">{bundle.validity}</span>
+                                </div>
                             </div>
                         </button>
                     ))}
-                </div>
-            </div>
+                </div >
+            </div >
         );
     };
 

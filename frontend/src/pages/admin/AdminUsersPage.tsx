@@ -8,12 +8,13 @@ import axios from 'axios';
 import api from '@/utils/api';
 import { cn } from '@/utils/cn';
 import Button from '@/components/Button';
+import { APP_CONFIG } from '@/config/constants';
 
 interface UserData {
     id: string;
     email: string;
     full_name: string;
-    role: 'customer' | 'admin' | 'agent' | 'dealer';
+    role: 'customer' | 'admin';
     wallet_balance: number;
     created_at: string;
     is_blocked: boolean;
@@ -104,7 +105,7 @@ const AdminUsersPage: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">User Directory</h1>
-                    <p className="text-slate-500 font-bold mt-1">Manage network participants, agents, and permissions.</p>
+                    <p className="text-slate-500 font-bold mt-1">Manage system administrators and customers.</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                     <button className="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 font-bold text-sm hover:bg-slate-100 transition-all">
@@ -194,9 +195,7 @@ const AdminUsersPage: React.FC = () => {
                                             "inline-flex items-center gap-2 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all",
                                             user.role === 'admin'
                                                 ? "bg-purple-500/10 text-purple-600 border-purple-500/20"
-                                                : user.role === 'dealer'
-                                                    ? "bg-primary/10 text-primary border-primary/20"
-                                                    : "bg-blue-500/10 text-blue-600 border-blue-500/20"
+                                                : "bg-blue-500/10 text-blue-600 border-blue-500/20"
                                         )}>
                                             {user.role === 'admin' ? <Shield className="w-3 h-3" /> : <User className="w-3 h-3" />}
                                             {user.role}
@@ -303,10 +302,8 @@ const AdminUsersPage: React.FC = () => {
                                         defaultValue={editingUser?.role || 'customer'}
                                         className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-transparent focus:border-primary/50 outline-none transition-all font-bold appearance-none"
                                     >
-                                        <option value="customer">Standard User</option>
-                                        <option value="dealer">Network Dealer</option>
-                                        <option value="agent">Support Agent</option>
-                                        <option value="admin">System Admin</option>
+                                        <option value="customer">{APP_CONFIG.ROLES.customer}</option>
+                                        <option value="admin">{APP_CONFIG.ROLES.admin}</option>
                                     </select>
                                 </div>
                                 <div className="space-y-2">

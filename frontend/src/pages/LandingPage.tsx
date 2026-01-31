@@ -4,6 +4,7 @@ import Button from '@/components/Button';
 import NetworkCard from '@/components/NetworkCard';
 import BundleModal from '@/components/BundleModal';
 import { Database, Shield, Rocket } from 'lucide-react';
+import { APP_CONFIG } from '@/config/constants';
 
 const LandingPage: React.FC = () => {
     const [selectedNetwork, setSelectedNetwork] = React.useState<string | null>(null);
@@ -26,13 +27,16 @@ const LandingPage: React.FC = () => {
                 </div>
 
                 <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8">
-                    The Future of <span className="text-primary italic">Cheap</span> <br />
-                    Data in Ghana.
+                    {APP_CONFIG.SYSTEM_SLOGAN.split('Cheap').map((part: string, i: number) => (
+                        <React.Fragment key={i}>
+                            {part}
+                            {i === 0 && <span className="text-primary italic">Cheap</span>}
+                        </React.Fragment>
+                    ))}
                 </h1>
 
                 <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-10">
-                    Experience effortless connectivity with DataSwap.
-                    Instant delivery, affordable prices, and 24/7 reliability.
+                    {APP_CONFIG.SYSTEM_DESCRIPTION}
                 </p>
 
                 <div className="flex flex-wrap items-center justify-center gap-4">
@@ -44,8 +48,8 @@ const LandingPage: React.FC = () => {
             {/* Network Selection */}
             <section className="py-20 bg-white/5 border-y border-white/5">
                 <div className="max-w-7xl mx-auto px-6 text-center">
-                    <h2 className="text-3xl font-bold mb-4">Choose Your Network</h2>
-                    <p className="text-slate-400 mb-12">Select your network provider to see available bundles.</p>
+                    <h2 className="text-4xl font-black mb-4">Choose Your Network</h2>
+                    <p className="text-slate-500 font-medium mb-12">Select your network provider to see available bundles.</p>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                         {networks.map((net) => (

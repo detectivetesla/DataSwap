@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { useAuth } from '@/context/AuthContext';
+import { APP_CONFIG } from '@/config/constants';
 
 interface AdminSidebarProps {
     className?: string;
@@ -71,7 +72,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ className, isCollapsed }) =
                     </div>
                     {!isCollapsed && (
                         <div className="flex flex-col">
-                            <span className="text-xl font-black text-slate-900 dark:text-white leading-none">Super Admin</span>
+                            <span className="text-xl font-black text-slate-900 dark:text-white leading-none">{APP_CONFIG.ROLES.admin}</span>
                             <span className="text-[10px] font-black text-[#2ECC71] uppercase tracking-[0.2em] mt-1">Control Panel</span>
                         </div>
                     )}

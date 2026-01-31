@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, Database, User, LogOut } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { useAuth } from '@/context/AuthContext';
+import { APP_CONFIG } from '@/config/constants';
 
 const Navbar: React.FC = () => {
     const { user, isAuthenticated, logout } = useAuth();
@@ -19,7 +20,7 @@ const Navbar: React.FC = () => {
             <div className="max-w-7xl mx-auto flex items-center justify-between">
                 <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                     <Database className="text-primary w-8 h-8 fill-primary" />
-                    <span className="text-xl font-bold tracking-tight">DataSwap</span>
+                    <span className="text-xl font-bold tracking-tight">{APP_CONFIG.SYSTEM_NAME}</span>
                 </Link>
 
                 {/* Desktop Menu */}

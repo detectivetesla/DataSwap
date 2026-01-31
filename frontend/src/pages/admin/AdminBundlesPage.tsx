@@ -7,6 +7,7 @@ import {
 import axios from 'axios';
 import api from '@/utils/api';
 import { cn } from '@/utils/cn';
+import { APP_CONFIG } from '@/config/constants';
 
 interface Bundle {
     id: string;
@@ -14,6 +15,8 @@ interface Bundle {
     name: string;
     data_amount: string;
     price_ghc: number;
+    agent_price_ghc: number;
+    validity_days: number;
     is_active: boolean;
 }
 
@@ -122,7 +125,7 @@ const AdminBundlesPage: React.FC = () => {
                     />
                 </div>
                 <div className="flex items-center gap-2 w-full md:w-auto p-1 bg-slate-100 dark:bg-black/20 rounded-2xl">
-                    {['All', 'MTN', 'Telecel', 'AirtelTigo'].map((net) => (
+                    {['All', 'MTN', 'Telecel', 'AT'].map((net) => (
                         <button
                             key={net}
                             onClick={() => setNetworkFilter(net)}
@@ -161,12 +164,12 @@ const AdminBundlesPage: React.FC = () => {
 
                         <div className="flex items-start justify-between relative z-10">
                             <div className={cn(
-                                "p-4 rounded-3xl shrink-0 shadow-lg shadow-black/5",
-                                bundle.network === 'MTN' ? "bg-yellow-400 text-slate-900" :
-                                    bundle.network === 'Telecel' ? "bg-red-500 text-white" :
-                                        "bg-blue-500 text-white"
+                                "p-3 rounded-2xl shrink-0 shadow-sm",
+                                bundle.network === 'MTN' ? "bg-yellow-400/10 text-yellow-600 border border-yellow-400/20" :
+                                    bundle.network === 'Telecel' ? "bg-red-500/10 text-red-600 border border-red-500/20" :
+                                        "bg-blue-500/10 text-blue-600 border border-blue-500/20"
                             )}>
-                                <Zap className="w-6 h-6" />
+                                <span className="text-xs font-black uppercase tracking-widest">{bundle.network}</span>
                             </div>
                             <div className="flex gap-2">
                                 <button
@@ -195,18 +198,32 @@ const AdminBundlesPage: React.FC = () => {
                             <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{bundle.data_amount}</h3>
                             <p className="text-sm font-bold text-slate-500 mb-6 truncate">{bundle.name}</p>
 
-                            <div className="flex items-end justify-between">
-                                <div className="text-3xl font-black text-emerald-500 tracking-tight">₵{Number(bundle.price_ghc).toFixed(2)}</div>
+                            <div className="flex items-center justify-between gap-4">
+                                <div className="space-y-1">
+                                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Customer Price</div>
+                                    <div className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">₵{Number(bundle.price_ghc).toFixed(2)}</div>
+                                </div>
+                                <div className="space-y-1 text-right">
+                                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Agent Price</div>
+                                    <div className="text-xl font-black text-emerald-500 tracking-tight">₵{Number(bundle.agent_price_ghc).toFixed(2)}</div>
+                                </div>
+                            </div>
+
+                            <div className="pt-4 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-slate-500 font-bold text-xs">
+                                    <Globe className="w-3.5 h-3.5" />
+                                    <span>{bundle.validity_days} Days Validity</span>
+                                </div>
                                 <button
                                     onClick={() => toggleStatus(bundle.id)}
                                     className={cn(
-                                        "w-12 h-12 rounded-2xl border-2 flex items-center justify-center transition-all duration-300 shadow-lg shadow-black/0",
+                                        "w-10 h-10 rounded-xl border flex items-center justify-center transition-all duration-300",
                                         bundle.is_active
-                                            ? "border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white hover:shadow-red-500/20"
-                                            : "border-emerald-500/20 text-emerald-500 hover:bg-emerald-500 hover:text-white hover:shadow-emerald-500/20"
+                                            ? "border-red-500/10 text-red-500 hover:bg-red-500 hover:text-white"
+                                            : "border-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white"
                                     )}
                                 >
-                                    <Power className="w-5 h-5" />
+                                    <Power className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
@@ -240,9 +257,9 @@ const AdminBundlesPage: React.FC = () => {
                                         defaultValue={editingBundle?.network || 'MTN'}
                                         className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-transparent focus:border-emerald-500/50 outline-none transition-all font-bold appearance-none"
                                     >
-                                        <option value="MTN">MTN Core</option>
-                                        <option value="Telecel">Telecel</option>
-                                        <option value="AirtelTigo">AirtelTigo</option>
+                                        <option value="MTN">MTN Network</option>
+                                        <option value="Telecel">Telecel Ghana</option>
+                                        <option value="AT">AT Network</option>
                                     </select>
                                 </div>
                                 <div className="space-y-2">
@@ -256,26 +273,53 @@ const AdminBundlesPage: React.FC = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs font-black text-slate-500 ml-1 uppercase tracking-widest">Data Volume</label>
-                                    <input
+                                    <label className="text-xs font-black text-slate-500 ml-1 uppercase tracking-widest">Data Amount</label>
+                                    <select
                                         name="data_amount"
-                                        defaultValue={editingBundle?.data_amount}
-                                        placeholder="50GB"
-                                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-transparent focus:border-emerald-500/50 outline-none transition-all font-bold"
-                                        required
-                                    />
+                                        defaultValue={editingBundle?.data_amount || '1GB'}
+                                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-transparent focus:border-slate-900 dark:focus:border-white/20 outline-none transition-all font-bold appearance-none"
+                                    >
+                                        {['500MB', '1GB', '2GB', '3GB', '5GB', '10GB', '20GB', '50GB', '100GB'].map(size => (
+                                            <option key={size} value={size}>{size}</option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs font-black text-slate-500 ml-1 uppercase tracking-widest">Unit Price (GHC)</label>
+                                    <label className="text-xs font-black text-slate-500 ml-1 uppercase tracking-widest">Customer Price (GH₵)</label>
                                     <input
                                         name="price_ghc"
                                         type="number"
                                         step="0.01"
                                         defaultValue={editingBundle?.price_ghc || 0}
-                                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-transparent focus:border-emerald-500/50 outline-none transition-all font-bold"
+                                        placeholder="5.00"
+                                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-transparent focus:border-slate-900 dark:focus:border-white/20 outline-none transition-all font-bold"
                                         required
                                     />
                                 </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-black text-slate-500 ml-1 uppercase tracking-widest">Agent Price (GH₵)</label>
+                                    <input
+                                        name="agent_price_ghc"
+                                        type="number"
+                                        step="0.01"
+                                        defaultValue={editingBundle?.agent_price_ghc || 0}
+                                        placeholder="4.50"
+                                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-transparent focus:border-slate-900 dark:focus:border-white/20 outline-none transition-all font-bold"
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-black text-slate-500 ml-1 uppercase tracking-widest">Validity (Days)</label>
+                                    <input
+                                        name="validity_days"
+                                        type="number"
+                                        defaultValue={editingBundle?.validity_days || 30}
+                                        placeholder="30"
+                                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-transparent focus:border-slate-900 dark:focus:border-white/20 outline-none transition-all font-bold"
+                                        required
+                                    />
+                                </div>
+                                <input type="hidden" name="name" value={editingBundle?.name || 'Standard Plan'} />
                             </div>
 
                             <button

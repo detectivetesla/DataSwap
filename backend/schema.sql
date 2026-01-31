@@ -1,6 +1,14 @@
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- Define User Roles Enum
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
+        CREATE TYPE user_role AS ENUM ('customer', 'admin');
+    END IF;
+END $$;
+
 -- Users Table
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -9,7 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
     phone_number TEXT UNIQUE,
     password_hash TEXT NOT NULL,
     wallet_balance DECIMAL(15, 2) DEFAULT 0.00,
-    role TEXT DEFAULT 'customer', -- customer, admin
+    role user_role DEFAULT 'customer',
     is_blocked BOOLEAN DEFAULT FALSE,
     api_key TEXT UNIQUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

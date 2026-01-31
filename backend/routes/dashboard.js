@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../db');
 const authMiddleware = require('../middleware/auth');
 const paystackService = require('../services/paystack');
+const CONFIG = require('../config/constants');
 
 // Initialize Deposit
 router.post('/deposit', authMiddleware, async (req, res) => {
@@ -11,12 +12,12 @@ router.post('/deposit', authMiddleware, async (req, res) => {
         const userId = req.user.id;
         const userEmail = req.user.email;
 
-        if (!amount || amount < 5) {
-            return res.status(400).json({ message: 'Minimum deposit amount is GH₵ 5.00' });
+        if (!amount || amount < CONFIG.MIN_DEPOSIT_GHC) {
+            return res.status(400).json({ message: `Minimum deposit amount is ${CONFIG.CURRENCY} ${CONFIG.MIN_DEPOSIT_GHC.toFixed(2)}` });
         }
 
-        // Apply 2% fee
-        const fee = amount * 0.02;
+        // Apply transaction fee
+        const fee = amount * CONFIG.TRANSACTION_FEE_PERCENTAGE;
         const totalAmount = Number(amount) + Number(fee);
 
         const metadata = {

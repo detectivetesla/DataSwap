@@ -1,15 +1,16 @@
 import React from 'react';
 import { MessageCircle } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { APP_CONFIG } from '@/config/constants';
 
 interface WhatsAppWidgetProps {
     phoneNumber?: string;
     message?: string;
 }
 
-const WhatsAppWidget: React.FC<WhatsAppWidgetProps> = ({ 
-    phoneNumber = '233541349282', 
-    message = 'Hello! I need assistance with EmWeb.' 
+const WhatsAppWidget: React.FC<WhatsAppWidgetProps> = ({
+    phoneNumber = APP_CONFIG.SUPPORT_WHATSAPP,
+    message = APP_CONFIG.SUPPORT_MESSAGE
 }) => {
     const handleClick = () => {
         const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
@@ -30,7 +31,7 @@ const WhatsAppWidget: React.FC<WhatsAppWidgetProps> = ({
                 )}
             >
                 <MessageCircle className="w-8 h-8 fill-current" />
-                
+
                 {/* Tooltip */}
                 <div className="absolute right-full mr-4 px-4 py-2 bg-slate-900 text-white text-xs font-black uppercase tracking-widest rounded-xl opacity-0 translate-x-4 pointer-events-none group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 whitespace-nowrap hidden sm:block">
                     Chat with Us

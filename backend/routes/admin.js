@@ -85,6 +85,11 @@ router.get('/users', authMiddleware, adminOnly, async (req, res) => {
 // Create User
 router.post('/users', authMiddleware, adminOnly, async (req, res) => {
     const { email, full_name, password, role, wallet_balance } = req.body;
+
+    if (!['customer', 'admin'].includes(role)) {
+        return res.status(400).json({ message: 'Invalid role. Must be customer or admin.' });
+    }
+
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const result = await db.query(
@@ -104,6 +109,11 @@ router.post('/users', authMiddleware, adminOnly, async (req, res) => {
 router.put('/users/:id', authMiddleware, adminOnly, async (req, res) => {
     const { id } = req.params;
     const { email, full_name, role, wallet_balance, is_blocked } = req.body;
+
+    if (role && !['customer', 'admin'].includes(role)) {
+        return res.status(400).json({ message: 'Invalid role. Must be customer or admin.' });
+    }
+
     try {
         const result = await db.query(
             'UPDATE users SET email = $1, full_name = $2, role = $3, wallet_balance = $4, is_blocked = $5 WHERE id = $6 RETURNING id, email, full_name, role, wallet_balance, is_blocked, created_at',
@@ -172,11 +182,11 @@ router.get('/bundles', async (req, res) => {
 
 // Create Bundle
 router.post('/bundles', authMiddleware, adminOnly, async (req, res) => {
-    const { network, name, data_amount, price_ghc } = req.body;
+    const { network, name, data_amount, price_ghc, agent_price_ghc, validity_days } = req.body;
     try {
         const result = await db.query(
-            'INSERT INTO bundles (network, name, data_amount, price_ghc) VALUES ($1, $2, $3, $4) RETURNING *',
-            [network, name, data_amount, price_ghc]
+            'INSERT INTO bundles (network, name, data_amount, price_ghc, agent_price_ghc, validity_days) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+            [network, name, data_amount, price_ghc, agent_price_ghc, validity_days]
         );
         res.status(201).json({ message: 'Bundle created', bundle: result.rows[0] });
     } catch (error) {
@@ -186,11 +196,11 @@ router.post('/bundles', authMiddleware, adminOnly, async (req, res) => {
 
 // Update Bundle
 router.put('/bundles/:id', authMiddleware, adminOnly, async (req, res) => {
-    const { network, name, data_amount, price_ghc, is_active } = req.body;
+    const { network, name, data_amount, price_ghc, agent_price_ghc, validity_days, is_active } = req.body;
     try {
         const result = await db.query(
-            'UPDATE bundles SET network = $1, name = $2, data_amount = $3, price_ghc = $4, is_active = $5 WHERE id = $6 RETURNING *',
-            [network, name, data_amount, price_ghc, is_active, req.params.id]
+            'UPDATE bundles SET network = $1, name = $2, data_amount = $3, price_ghc = $4, agent_price_ghc = $5, validity_days = $6, is_active = $7 WHERE id = $8 RETURNING *',
+            [network, name, data_amount, price_ghc, agent_price_ghc, validity_days, is_active, req.params.id]
         );
         res.json({ message: 'Bundle updated', bundle: result.rows[0] });
     } catch (error) {

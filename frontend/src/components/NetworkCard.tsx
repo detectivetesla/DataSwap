@@ -10,29 +10,20 @@ interface NetworkCardProps {
 }
 
 const NetworkCard: React.FC<NetworkCardProps> = ({ name, logo, color, isActive, onClick }) => {
-    const colors = {
-        yellow: 'border-yellow-500/20 hover:border-yellow-500/50 bg-yellow-500/5',
-        active_yellow: 'border-yellow-500 bg-yellow-500/10 shadow-[0_0_20px_rgba(234,179,8,0.2)]',
-        red: 'border-red-500/20 hover:border-red-500/50 bg-red-500/5',
-        active_red: 'border-red-500 bg-red-500/10 shadow-[0_0_20px_rgba(239,68,68,0.2)]',
-        blue: 'border-blue-500/20 hover:border-blue-500/50 bg-blue-500/5',
-        active_blue: 'border-blue-500 bg-blue-500/10 shadow-[0_0_20px_rgba(59,130,246,0.2)]',
-    };
-
-    const activeKey = `active_${color}` as keyof typeof colors;
-
     const logoBgs = {
-        yellow: 'bg-[#FFCC00]',
-        red: 'bg-[#E60000]',
-        blue: 'bg-[#003876]'
+        yellow: 'bg-yellow-400',
+        red: 'bg-red-500',
+        blue: 'bg-blue-600'
     };
 
     return (
         <div
             onClick={onClick}
             className={cn(
-                'cursor-pointer flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-300',
-                isActive ? colors[activeKey] : colors[color]
+                'cursor-pointer flex flex-col items-center justify-center p-8 rounded-[2.5rem] bg-white dark:bg-white/5 border-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]',
+                isActive
+                    ? `border-${color}-500 shadow-xl shadow-${color}-500/20`
+                    : "border-slate-100 dark:border-white/5 hover:border-slate-200 dark:hover:border-white/10"
             )}
         >
             <div className={cn(
