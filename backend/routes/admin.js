@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/auth');
 const db = require('../db');
+const bcrypt = require('bcryptjs');
 
 // Admin Check Middleware
 const adminOnly = (req, res, next) => {
@@ -74,10 +75,60 @@ router.get('/recent-data', authMiddleware, adminOnly, async (req, res) => {
 // Get All Users
 router.get('/users', authMiddleware, adminOnly, async (req, res) => {
     try {
-        const result = await db.query('SELECT id, email, full_name, role, wallet_balance, created_at FROM users ORDER BY created_at DESC');
+        const result = await db.query('SELECT id, email, full_name, role, wallet_balance, is_blocked, created_at FROM users ORDER BY created_at DESC');
         res.json({ users: result.rows });
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch users', error: error.message });
+    }
+});
+
+// Create User
+router.post('/users', authMiddleware, adminOnly, async (req, res) => {
+    const { email, full_name, password, role, wallet_balance } = req.body;
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const result = await db.query(
+            'INSERT INTO users (email, full_name, password_hash, role, wallet_balance) VALUES ($1, $2, $3, $4, $5) RETURNING id, email, full_name, role, wallet_balance, is_blocked, created_at',
+            [email, full_name, hashedPassword, role, wallet_balance]
+        );
+        res.status(201).json({ message: 'User created successfully', user: result.rows[0] });
+    } catch (error) {
+        if (error.code === '23505') {
+            return res.status(400).json({ message: 'Email already exists' });
+        }
+        res.status(500).json({ message: 'Failed to create user', error: error.message });
+    }
+});
+
+// Update User
+router.put('/users/:id', authMiddleware, adminOnly, async (req, res) => {
+    const { id } = req.params;
+    const { email, full_name, role, wallet_balance, is_blocked } = req.body;
+    try {
+        const result = await db.query(
+            'UPDATE users SET email = $1, full_name = $2, role = $3, wallet_balance = $4, is_blocked = $5 WHERE id = $6 RETURNING id, email, full_name, role, wallet_balance, is_blocked, created_at',
+            [email, full_name, role, wallet_balance, is_blocked, id]
+        );
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json({ message: 'User updated successfully', user: result.rows[0] });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to update user', error: error.message });
+    }
+});
+
+// Toggle User Blocked Status
+router.post('/users/:id/toggle-block', authMiddleware, adminOnly, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await db.query('UPDATE users SET is_blocked = NOT is_blocked WHERE id = $1 RETURNING is_blocked', [id]);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json({ message: `User ${result.rows[0].is_blocked ? 'blocked' : 'unblocked'} successfully`, is_blocked: result.rows[0].is_blocked });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to toggle user block status', error: error.message });
     }
 });
 

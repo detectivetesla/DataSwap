@@ -16,7 +16,8 @@ interface UserData {
     role: 'customer' | 'admin' | 'agent' | 'dealer';
     wallet_balance: number;
     created_at: string;
-    status: 'active' | 'suspended';
+    is_blocked: boolean;
+    status?: 'active' | 'suspended';
 }
 
 const AdminUsersPage: React.FC = () => {
@@ -34,16 +35,25 @@ const AdminUsersPage: React.FC = () => {
         setLoading(true);
         try {
             const response = await api.get('/admin/users');
-            // Ensure status property exists for UI
-            const usersWithStatus = response.data.users.map((u: any) => ({
+            const usersWithStatus = response.data.users.map((u: UserData) => ({
                 ...u,
-                status: u.status || 'active'
+                status: u.is_blocked ? 'suspended' : 'active'
             }));
             setUsers(usersWithStatus);
         } catch (error) {
             console.error('Failed to fetch users', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleToggleBlock = async (id: string) => {
+        try {
+            const response = await api.post(`/admin/users/${id}/toggle-block`);
+            const { is_blocked } = response.data;
+            setUsers(users.map(u => u.id === id ? { ...u, is_blocked, status: is_blocked ? 'suspended' : 'active' } : u));
+        } catch (error) {
+            alert('Failed to toggle block status');
         }
     };
 
@@ -62,18 +72,24 @@ const AdminUsersPage: React.FC = () => {
         const formData = new FormData(e.currentTarget);
         const data = Object.fromEntries(formData.entries());
 
+        // Convert balance to number
+        data.wallet_balance = Number(data.wallet_balance) as any;
+
         try {
             if (editingUser) {
                 // Update existing
-                await api.put(`/admin/users/${editingUser.id}`, data);
+                await api.put(`/admin/users/${editingUser.id}`, {
+                    ...data,
+                    is_blocked: editingUser.is_blocked
+                });
             } else {
                 // Create new
                 await api.post('/admin/users', data);
             }
             setIsModalOpen(false);
             fetchUsers();
-        } catch (error) {
-            alert('Failed to save user');
+        } catch (error: any) {
+            alert(error.response?.data?.message || 'Failed to save user');
         }
     };
 
@@ -208,12 +224,26 @@ const AdminUsersPage: React.FC = () => {
                                             <button
                                                 onClick={() => { setEditingUser(user); setIsModalOpen(true); }}
                                                 className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
+                                                title="Edit User"
                                             >
                                                 <Edit className="w-4 h-4" />
                                             </button>
                                             <button
+                                                onClick={() => handleToggleBlock(user.id)}
+                                                className={cn(
+                                                    "w-10 h-10 rounded-xl border flex items-center justify-center transition-all",
+                                                    user.is_blocked
+                                                        ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500 hover:bg-emerald-500 hover:text-white"
+                                                        : "bg-amber-500/10 border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-white"
+                                                )}
+                                                title={user.is_blocked ? "Unblock User" : "Block User"}
+                                            >
+                                                <Shield className="w-4 h-4" />
+                                            </button>
+                                            <button
                                                 onClick={() => handleDelete(user.id)}
                                                 className="w-10 h-10 rounded-xl bg-red-500/5 border border-red-500/10 flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-lg shadow-red-500/0 hover:shadow-red-500/20"
+                                                title="Delete User"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
