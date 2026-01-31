@@ -1,7 +1,8 @@
 const axios = require('axios');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
-const PORTAL02_BASE_URL = 'https://portal02.com/api'; // Replace with actual base URL if different
+const PORTAL02_BASE_URL = process.env.PORTAL02_BASE_URL || 'https://portal02.com/api';
 
 const portal02Service = {
     /**
