@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Wallet,
-    Zap,
+    Database,
     ShoppingBag,
     Clock,
     CheckCircle2,
@@ -75,10 +75,10 @@ const Overview: React.FC = () => {
     }, []);
 
     const statCards = [
-        { label: 'Wallet Balance', value: `GH₵ ${stats.walletBalance.toLocaleString()}`, icon: Wallet, color: 'bg-orange-500', trend: '+0.0%' },
-        { label: 'Total Orders', value: stats.totalOrders.toString(), icon: ShoppingBag, color: 'bg-emerald-500', trend: '+0' },
-        { label: 'Processing Orders', value: stats.processingOrders.toString(), icon: Clock, color: 'bg-blue-500', trend: '0' },
-        { label: 'Completed Orders', value: stats.completedOrders.toString(), icon: CheckCircle2, color: 'bg-purple-500', trend: '+0' },
+        { label: 'Wallet Balance', value: `GH₵ ${stats.walletBalance.toLocaleString()}`, icon: Wallet, color: 'text-orange-600 dark:text-orange-400', bgColor: 'bg-orange-500/10', iconBg: 'bg-orange-500', trend: '+0.0%' },
+        { label: 'Total Orders', value: stats.totalOrders.toString(), icon: ShoppingBag, color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', iconBg: 'bg-emerald-500', trend: '+0' },
+        { label: 'Processing Orders', value: stats.processingOrders.toString(), icon: Clock, color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-500/10', iconBg: 'bg-blue-500', trend: '0' },
+        { label: 'Completed Orders', value: stats.completedOrders.toString(), icon: CheckCircle2, color: 'text-purple-600 dark:text-purple-400', bgColor: 'bg-purple-500/10', iconBg: 'bg-purple-500', trend: '+0' },
     ];
 
     const getNetworkLogo = (network: string) => {
@@ -113,7 +113,11 @@ const Overview: React.FC = () => {
                     {/* Stats Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {statCards.map((stat, i) => (
-                            <div key={i} className="p-4 sm:p-5 md:p-6 rounded-3xl sm:rounded-[2rem] bg-white dark:bg-white/5 shadow-sm hover:shadow-md transition-all group border border-slate-100 dark:border-white/10 hover:border-primary/20 relative overflow-hidden">
+                            <div key={i} className={cn(
+                                "p-4 sm:p-5 md:p-6 rounded-3xl sm:rounded-[2rem] shadow-sm hover:shadow-md transition-all group border relative overflow-hidden",
+                                stat.bgColor,
+                                "border-transparent hover:border-primary/20"
+                            )}>
                                 {loading ? (
                                     <div className="animate-pulse space-y-4">
                                         <div className="w-12 h-12 bg-slate-200 dark:bg-white/10 rounded-xl" />
@@ -124,12 +128,12 @@ const Overview: React.FC = () => {
                                         <div className="space-y-2 sm:space-y-3 md:space-y-4">
                                             <div className={cn(
                                                 "w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center text-white shadow-lg transition-transform group-hover:scale-110",
-                                                stat.color
+                                                stat.iconBg
                                             )}>
                                                 <stat.icon className="w-4 h-4 sm:w-5 h-5 md:w-6 md:h-6" />
                                             </div>
                                             <div>
-                                                <p className="text-xl sm:text-2xl md:text-4xl font-black text-black dark:text-white tracking-tight">{stat.value}</p>
+                                                <p className={cn("text-xl sm:text-2xl md:text-4xl font-black tracking-tight", stat.color)}>{stat.value}</p>
                                                 <p className="text-[10px] sm:text-xs md:text-sm font-black text-slate-700 dark:text-slate-400 uppercase tracking-widest mt-0.5 md:mt-1">{stat.label}</p>
                                             </div>
                                         </div>
@@ -289,7 +293,7 @@ const Overview: React.FC = () => {
             <div className="p-5 sm:p-6 md:p-8 rounded-3xl sm:rounded-[2.5rem] bg-slate-900 text-white shadow-xl shadow-slate-900/10 relative overflow-hidden group">
                 {/* Background Decoration */}
                 <div className="absolute top-0 right-0 p-12 opacity-5 group-hover:scale-125 transition-transform duration-700 pointer-events-none">
-                    <Zap className="w-64 h-64 fill-white" />
+                    <Database className="w-64 h-64 fill-white" />
                 </div>
 
                 <div className="relative z-10 flex flex-col xl:flex-row items-center justify-between gap-6 md:gap-8">

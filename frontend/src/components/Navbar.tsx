@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, Zap, User, LogOut } from 'lucide-react';
+import { Menu, X, Database, User, LogOut } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { useAuth } from '@/context/AuthContext';
 
@@ -18,7 +18,7 @@ const Navbar: React.FC = () => {
         <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10 px-6 py-4">
             <div className="max-w-7xl mx-auto flex items-center justify-between">
                 <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                    <Zap className="text-primary w-8 h-8 fill-primary" />
+                    <Database className="text-primary w-8 h-8 fill-primary" />
                     <span className="text-xl font-bold tracking-tight">DataSwap</span>
                 </Link>
 

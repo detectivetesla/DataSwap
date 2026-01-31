@@ -3,7 +3,7 @@ import { NavLink, Link } from 'react-router-dom';
 import {
     LayoutDashboard,
     Wallet,
-    Zap,
+    Database,
     ShoppingBag,
     ArrowLeftRight,
     Download,
@@ -33,7 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onClose, isCollapsed }) =>
         { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', end: true, color: 'text-emerald-600 dark:text-emerald-500', bgColor: 'bg-emerald-500/20' },
         { icon: Wallet, label: 'Wallet', path: '/dashboard/wallet', color: 'text-orange-600 dark:text-orange-500', bgColor: 'bg-orange-500/20' },
         { icon: Download, label: 'Deposits', path: '/dashboard/deposits', color: 'text-blue-600 dark:text-blue-500', bgColor: 'bg-blue-500/20' },
-        { icon: Zap, label: 'Data Bundles', path: '/dashboard/data-bundles', color: 'text-primary', bgColor: 'bg-primary/20' },
+        { icon: Database, label: 'Data Bundles', path: '/dashboard/data-bundles', color: 'text-primary', bgColor: 'bg-primary/20' },
         { icon: ShoppingBag, label: 'Orders', path: '/dashboard/orders', badge: '3', color: 'text-purple-600 dark:text-purple-500', bgColor: 'bg-purple-500/20' },
         { icon: ArrowLeftRight, label: 'Transactions', path: '/dashboard/transactions', color: 'text-amber-600 dark:text-amber-500', bgColor: 'bg-amber-500/20' },
     ];
@@ -50,7 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onClose, isCollapsed }) =>
                     isCollapsed && "justify-center px-0 mb-6"
                 )}>
                     <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30 transition-transform group-hover:scale-110 shrink-0">
-                        <Zap className="text-white w-6 h-6 fill-white" />
+                        <Database className="text-white w-6 h-6 fill-white" />
                     </div>
                     {!isCollapsed && (
                         <span className="text-2xl font-black tracking-tight text-slate-900 dark:text-white truncate">DataSwap.</span>

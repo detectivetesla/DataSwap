@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
-import { Menu, X, Cloud, Zap, PanelLeft } from 'lucide-react';
+import { Menu, X, Cloud, PanelLeft } from 'lucide-react';
 import { cn } from '@/utils/cn';
 
 const Dashboard: React.FC = () => {

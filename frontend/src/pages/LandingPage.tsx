@@ -3,7 +3,7 @@ import Navbar from '@/components/Navbar';
 import Button from '@/components/Button';
 import NetworkCard from '@/components/NetworkCard';
 import BundleModal from '@/components/BundleModal';
-import { Zap, Shield, Rocket } from 'lucide-react';
+import { Database, Shield, Rocket } from 'lucide-react';
 
 const LandingPage: React.FC = () => {
     const [selectedNetwork, setSelectedNetwork] = React.useState<string | null>(null);
@@ -21,8 +21,8 @@ const LandingPage: React.FC = () => {
             {/* Hero Section */}
             <section className="pt-32 pb-20 px-6 max-w-7xl mx-auto text-center">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6">
-                    <Zap className="w-4 h-4 fill-primary" />
-                    <span>Lightning Fast Data Delivery</span>
+                    <Database className="w-4 h-4 fill-primary" />
+                    <span>Secure & Fast Data Delivery</span>
                 </div>
 
                 <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8">
@@ -82,9 +82,9 @@ const LandingPage: React.FC = () => {
                 </div>
                 <div className="space-y-4">
                     <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                        <Zap className="text-emerald-500" />
+                        <Database className="text-emerald-500" />
                     </div>
-                    <h3 className="text-xl font-bold">Instant Delivery</h3>
+                    <h3 className="text-xl font-bold">Reliable Delivery</h3>
                     <p className="text-slate-400">Data reflects on your phone within seconds of purchase.</p>
                 </div>
                 <div className="space-y-4">
