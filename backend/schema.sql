@@ -36,12 +36,13 @@ CREATE TABLE IF NOT EXISTS profiles (
 -- Bundles Table
 CREATE TABLE IF NOT EXISTS bundles (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    network TEXT NOT NULL, -- MTN, Telecel, AirtelTigo
+    network TEXT NOT NULL, -- MTN, Telecel, AT
     name TEXT NOT NULL,
     data_amount TEXT NOT NULL,
     price_ghc DECIMAL(15, 2) NOT NULL,
     provider_code TEXT, -- External API code
     validity TEXT DEFAULT '30 Days',
+    validity_days INTEGER DEFAULT 30,
     is_active BOOLEAN DEFAULT TRUE,
     is_popular BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP

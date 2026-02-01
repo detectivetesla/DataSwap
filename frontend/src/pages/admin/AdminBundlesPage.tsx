@@ -15,7 +15,6 @@ interface Bundle {
     name: string;
     data_amount: string;
     price_ghc: number;
-    agent_price_ghc: number;
     validity_days: number;
     is_active: boolean;
 }

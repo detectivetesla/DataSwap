@@ -35,6 +35,7 @@ import DataBundles from '@/pages/dashboard/DataBundles';
 import Orders from '@/pages/dashboard/Orders';
 import Transactions from '@/pages/dashboard/Transactions';
 import Settings from '@/pages/dashboard/Settings';
+import Profile from '@/pages/dashboard/Profile';
 import Inboxes from '@/pages/dashboard/Inboxes';
 import Notifications from '@/pages/dashboard/Notifications';
 
@@ -56,6 +57,7 @@ const AppRoutes: React.FC = () => {
                 <Route path="orders" element={<Orders />} />
                 <Route path="transactions" element={<Transactions />} />
                 <Route path="settings" element={<Settings />} />
+                <Route path="profile" element={<Profile />} />
                 <Route path="inbox" element={<Inboxes />} />
                 <Route path="notifications" element={<Notifications />} />
             </Route>

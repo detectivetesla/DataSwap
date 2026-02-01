@@ -166,7 +166,7 @@ const Header: React.FC<HeaderProps> = ({
                 <div className="h-8 w-[1px] bg-slate-200 dark:bg-white/10 mx-1 hidden sm:block" />
 
                 <div
-                    onClick={() => navigate('/dashboard/settings')}
+                    onClick={() => navigate('/dashboard/profile')}
                     className="flex items-center gap-2 sm:gap-3 pl-1 sm:pl-2 group cursor-pointer"
                 >
                     <div className="flex flex-col items-end hidden xs:flex">

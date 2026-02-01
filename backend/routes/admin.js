@@ -182,29 +182,31 @@ router.get('/bundles', async (req, res) => {
 
 // Create Bundle
 router.post('/bundles', authMiddleware, adminOnly, async (req, res) => {
-    const { network, name, data_amount, price_ghc, agent_price_ghc, validity_days } = req.body;
+    const { network, name, data_amount, price_ghc, validity_days } = req.body;
     try {
         const result = await db.query(
-            'INSERT INTO bundles (network, name, data_amount, price_ghc, agent_price_ghc, validity_days) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-            [network, name, data_amount, price_ghc, agent_price_ghc, validity_days]
+            'INSERT INTO bundles (network, name, data_amount, price_ghc, validity_days) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+            [network, name, data_amount, price_ghc, validity_days]
         );
         res.status(201).json({ message: 'Bundle created', bundle: result.rows[0] });
     } catch (error) {
-        res.status(500).json({ message: 'Failed to create bundle' });
+        console.error('Create Bundle Error:', error);
+        res.status(500).json({ message: 'Failed to create bundle', error: error.message });
     }
 });
 
 // Update Bundle
 router.put('/bundles/:id', authMiddleware, adminOnly, async (req, res) => {
-    const { network, name, data_amount, price_ghc, agent_price_ghc, validity_days, is_active } = req.body;
+    const { network, name, data_amount, price_ghc, validity_days, is_active } = req.body;
     try {
         const result = await db.query(
-            'UPDATE bundles SET network = $1, name = $2, data_amount = $3, price_ghc = $4, agent_price_ghc = $5, validity_days = $6, is_active = $7 WHERE id = $8 RETURNING *',
-            [network, name, data_amount, price_ghc, agent_price_ghc, validity_days, is_active, req.params.id]
+            'UPDATE bundles SET network = $1, name = $2, data_amount = $3, price_ghc = $4, validity_days = $5, is_active = $6 WHERE id = $7 RETURNING *',
+            [network, name, data_amount, price_ghc, validity_days, is_active, req.params.id]
         );
         res.json({ message: 'Bundle updated', bundle: result.rows[0] });
     } catch (error) {
-        res.status(500).json({ message: 'Failed to update bundle' });
+        console.error('Update Bundle Error:', error);
+        res.status(500).json({ message: 'Failed to update bundle', error: error.message });
     }
 });
 
