@@ -45,10 +45,10 @@ const AdminPage: React.FC = () => {
     }, []);
 
     const stats = [
-        { label: 'TOTAL USERS', value: statsData.totalUsers.toString(), icon: Users, color: 'text-purple-500', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
-        { label: "TODAY'S ORDERS", value: statsData.todayOrders.toString(), icon: Database, color: 'text-orange-500', bg: 'bg-orange-500/10', border: 'border-orange-500/20' },
-        { label: "TODAY'S REVENUE", value: `GH₵ ${statsData.todayRevenue.toLocaleString()}`, icon: BarChart3, color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
-        { label: 'LIFETIME REVENUE', value: `GH₵ ${statsData.lifetimeRevenue.toLocaleString()}`, icon: TrendingUp, color: 'text-[#2ECC71]', bg: 'bg-[#2ECC71]/10', border: 'border-[#2ECC71]/20', isPrimary: true },
+        { label: 'TOTAL USERS', value: statsData.totalUsers.toString(), icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/20', border: 'border-blue-500/30', path: '/admin/users' },
+        { label: "TODAY'S ORDERS", value: statsData.todayOrders.toString(), icon: Database, color: 'text-orange-500', bg: 'bg-orange-500/20', border: 'border-orange-500/30', path: '/admin/orders' },
+        { label: "TODAY'S REVENUE", value: `GH₵ ${statsData.todayRevenue.toLocaleString()}`, icon: BarChart3, color: 'text-blue-500', bg: 'bg-blue-500/20', border: 'border-blue-500/30', path: '/admin/analytics' },
+        { label: 'LIFETIME REVENUE', value: `GH₵ ${statsData.lifetimeRevenue.toLocaleString()}`, icon: TrendingUp, color: 'text-emerald-500', bg: 'bg-emerald-500/20', border: 'border-emerald-500/30', isPrimary: true, path: '/admin/analytics' },
     ];
 
     return (
@@ -63,7 +63,7 @@ const AdminPage: React.FC = () => {
                         <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight mb-4">
                             Welcome back, {user?.fullName?.split(' ')[0] || 'Admin'}!
                         </h1>
-                        <p className="text-slate-400 font-bold max-w-xl text-lg leading-relaxed">
+                        <p className="text-slate-200 font-bold max-w-xl text-lg leading-relaxed">
                             Your platform analytics and system controls are ready. Here's a summary of today's performance.
                         </p>
                     </div>
@@ -76,7 +76,7 @@ const AdminPage: React.FC = () => {
             {/* System Status Banner */}
             <div className="bg-[#0B0F19] border border-white/5 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-[#2ECC71]/10 border border-[#2ECC71]/20 flex items-center justify-center text-[#2ECC71]">
+                    <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500">
                         <ShieldCheck className="w-6 h-6" />
                     </div>
                     <div>
@@ -90,7 +90,7 @@ const AdminPage: React.FC = () => {
                         onClick={() => setIsMaintenanceMode(!isMaintenanceMode)}
                         className={cn(
                             "w-12 h-6 rounded-full relative transition-all duration-300",
-                            isMaintenanceMode ? "bg-[#2ECC71]" : "bg-slate-700"
+                            isMaintenanceMode ? "bg-blue-500" : "bg-slate-700"
                         )}
                     >
                         <div className={cn(
@@ -104,32 +104,38 @@ const AdminPage: React.FC = () => {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {stats.map((stat) => (
-                    <div key={stat.label} className={cn(
-                        "p-6 rounded-[2rem] border relative overflow-hidden transition-all group",
-                        stat.bg, stat.border, "shadow-sm"
-                    )}>
+                    <Link
+                        key={stat.label}
+                        to={stat.path}
+                        className={cn(
+                            "p-6 rounded-[2rem] border-2 relative overflow-hidden transition-all group cursor-pointer",
+                            stat.bg, stat.border,
+                            "hover:scale-105 hover:shadow-2xl hover:brightness-110",
+                            "shadow-lg"
+                        )}
+                    >
                         {loading ? (
                             <div className="animate-pulse space-y-4">
-                                <div className="h-4 w-1/2 bg-white/5 rounded" />
-                                <div className="h-8 w-3/4 bg-white/10 rounded" />
+                                <div className="h-4 w-1/2 bg-white/20 rounded" />
+                                <div className="h-8 w-3/4 bg-white/30 rounded" />
                             </div>
                         ) : (
-                            <div className="flex items-center gap-4">
-                                <div className={cn("p-3 rounded-xl bg-white/20 border border-white/10")}>
-                                    <stat.icon className={cn("w-5 h-5", stat.color.replace('text-', 'text-'))} />
+                            <div className="flex items-center gap-4 relative z-10">
+                                <div className={cn("p-3 rounded-xl bg-white/30 border border-white/20 shadow-inner group-hover:scale-110 transition-transform")}>
+                                    <stat.icon className={cn("w-5 h-5 text-white")} />
                                 </div>
                                 <div className="flex flex-col">
                                     <h3 className="text-2xl font-black text-white">{stat.value}</h3>
-                                    <p className="text-[10px] font-black text-white/60 uppercase tracking-widest leading-none mt-1">{stat.label}</p>
+                                    <p className="text-[10px] font-black text-white/80 uppercase tracking-widest leading-none mt-1">{stat.label}</p>
                                 </div>
                             </div>
                         )}
                         {stat.isPrimary && (
-                            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-125 transition-transform duration-500">
-                                <TrendingUp className="w-16 h-16 text-[#2ECC71]" />
+                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform duration-500">
+                                <TrendingUp className="w-16 h-16 text-white" />
                             </div>
                         )}
-                    </div>
+                    </Link>
                 ))}
             </div>
 
@@ -138,7 +144,7 @@ const AdminPage: React.FC = () => {
                 <div className="xl:col-span-2 bg-[#0B0F19] border border-white/5 rounded-[2rem] p-8 overflow-hidden">
                     <div className="flex items-center justify-between mb-8">
                         <h2 className="text-2xl font-black text-white">Recent Orders</h2>
-                        <Link to="/admin/orders" className="px-4 py-2 rounded-lg bg-[#2ECC71] text-white font-black text-xs hover:scale-105 active:scale-95 transition-all">
+                        <Link to="/admin/orders" className="px-4 py-2 rounded-lg bg-blue-500 text-white font-black text-xs hover:scale-105 active:scale-95 transition-all">
                             See all →
                         </Link>
                     </div>
@@ -191,7 +197,7 @@ const AdminPage: React.FC = () => {
                 <div className="bg-[#0B0F19] border border-white/5 rounded-[2rem] p-8 overflow-hidden">
                     <div className="flex items-center justify-between mb-8">
                         <h2 className="text-2xl font-black text-white">New Users</h2>
-                        <Link to="/admin/users" className="px-4 py-2 rounded-lg bg-[#2ECC71] text-white font-black text-xs hover:scale-105 active:scale-95 transition-all">
+                        <Link to="/admin/users" className="px-4 py-2 rounded-lg bg-blue-500 text-white font-black text-xs hover:scale-105 active:scale-95 transition-all">
                             See all →
                         </Link>
                     </div>

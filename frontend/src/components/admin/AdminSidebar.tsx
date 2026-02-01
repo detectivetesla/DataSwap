@@ -22,7 +22,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ className, isCollapsed }) =
         {
             title: 'General',
             items: [
-                { icon: LayoutGrid, label: 'Dashboard', path: '/admin', color: 'text-[#2ECC71]', end: true },
+                { icon: LayoutGrid, label: 'Dashboard', path: '/admin', color: 'text-blue-500', end: true },
                 { icon: BarChart2, label: 'Analytics', path: '/admin/analytics', color: 'text-indigo-500' },
             ]
         },
@@ -46,7 +46,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ className, isCollapsed }) =
             items: [
                 { icon: Globe, label: 'Networks', path: '/admin/networks', color: 'text-cyan-500' },
                 { icon: Terminal, label: 'API Settings', path: '/admin/developer', color: 'text-slate-500' },
-                { icon: Activity, label: 'Activity Log', path: '/admin/activity-log', color: 'text-[#2ECC71]' },
+                { icon: Activity, label: 'Activity Log', path: '/admin/activity-log', color: 'text-blue-500' },
             ]
         },
         {
@@ -68,12 +68,12 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ className, isCollapsed }) =
             <div className={cn("p-8 pb-4 transition-all", isCollapsed && "p-6 flex justify-center")}>
                 <Link to="/admin" className="flex items-center gap-3 group">
                     <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center shadow-2xl shadow-black/20 group-hover:scale-110 transition-transform">
-                        <Shield className="w-6 h-6 text-[#2ECC71]" />
+                        <Shield className="w-6 h-6 text-blue-500" />
                     </div>
                     {!isCollapsed && (
                         <div className="flex flex-col">
                             <span className="text-xl font-black text-slate-900 dark:text-white leading-none">{APP_CONFIG.ROLES.admin}</span>
-                            <span className="text-[10px] font-black text-[#2ECC71] uppercase tracking-[0.2em] mt-1">Control Panel</span>
+                            <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mt-1">Control Panel</span>
                         </div>
                     )}
                 </Link>
@@ -98,7 +98,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ className, isCollapsed }) =
                                     "flex items-center rounded-2xl transition-all duration-300 group relative",
                                     isCollapsed ? "justify-center p-3 mb-2" : "gap-4 px-6 py-3",
                                     isActive
-                                        ? "bg-[#2ECC71]/10 text-[#2ECC71] font-black shadow-sm border border-[#2ECC71]/10"
+                                        ? "bg-blue-500/10 text-blue-500 font-black shadow-sm border border-blue-500/10"
                                         : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
                                 )}
                             >
@@ -108,13 +108,13 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ className, isCollapsed }) =
                                             "rounded-xl transition-all group-hover:scale-110 shrink-0",
                                             isCollapsed ? "p-3" : "p-2 bg-current/10",
                                             item.color,
-                                            isCollapsed && isItemActive && "bg-[#2ECC71]/10 shadow-lg shadow-[#2ECC71]/20"
+                                            isCollapsed && isItemActive && "bg-blue-500/10 shadow-lg shadow-blue-500/20"
                                         )}>
                                             <item.icon className={isCollapsed ? "w-6 h-6" : "w-4 h-4"} />
                                         </div>
                                         {!isCollapsed && <span className="text-sm font-bold tracking-tight">{item.label}</span>}
                                         {isItemActive && !isCollapsed && (
-                                            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#2ECC71] shadow-[0_0_8px_rgba(46,204,113,0.5)]" />
+                                            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
                                         )}
                                     </>
                                 )}
