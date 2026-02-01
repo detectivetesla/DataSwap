@@ -35,8 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onClose, isCollapsed }) =>
         { icon: Download, label: 'Deposits', path: '/dashboard/deposits', color: 'text-blue-600 dark:text-blue-500', bgColor: 'bg-blue-500/20' },
         { icon: Database, label: 'Data Bundles', path: '/dashboard/data-bundles', color: 'text-primary', bgColor: 'bg-primary/20' },
         { icon: ShoppingBag, label: 'Orders', path: '/dashboard/orders', badge: '3', color: 'text-purple-600 dark:text-purple-500', bgColor: 'bg-purple-500/20' },
-        { icon: ArrowLeftRight, label: 'Transactions', path: '/dashboard/transactions', color: 'text-amber-600 dark:text-amber-500', bgColor: 'bg-amber-500/20' },
-        { icon: Settings, label: 'Settings', path: '/dashboard/settings', color: 'text-violet-600 dark:text-violet-500', bgColor: 'bg-violet-500/20' },
+        { icon: ArrowLeftRight, label: 'Transactions', path: '/dashboard/transactions', color: 'text-amber-600 dark:text-amber-500', bgColor: 'bg-orange-500/20' },
     ];
 
     return (

@@ -54,8 +54,8 @@ const AdminPage: React.FC = () => {
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
             {/* Welcome Hero Section */}
-            <div className="bg-[#0B0F19] border border-white/5 rounded-[2rem] p-8 sm:p-12 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-1000">
+            <div className="bg-blue-600 border border-white/5 rounded-[2rem] p-8 sm:p-12 relative overflow-hidden group shadow-2xl shadow-blue-500/20">
+                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-1000">
                     <LayoutGrid className="w-64 h-64 text-white" />
                 </div>
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -105,8 +105,8 @@ const AdminPage: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {stats.map((stat) => (
                     <div key={stat.label} className={cn(
-                        "p-8 rounded-[2rem] border relative overflow-hidden transition-all group",
-                        stat.isPrimary ? "bg-[#0B0F19] border-[#2ECC71]/20" : "bg-[#0B0F19] border-white/5"
+                        "p-6 rounded-[2rem] border relative overflow-hidden transition-all group",
+                        stat.bg, stat.border, "shadow-sm"
                     )}>
                         {loading ? (
                             <div className="animate-pulse space-y-4">
@@ -114,13 +114,13 @@ const AdminPage: React.FC = () => {
                                 <div className="h-8 w-3/4 bg-white/10 rounded" />
                             </div>
                         ) : (
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className={cn("p-3 rounded-xl border", stat.bg, stat.border)}>
-                                    <stat.icon className={cn("w-5 h-5", stat.color)} />
+                            <div className="flex items-center gap-4">
+                                <div className={cn("p-3 rounded-xl bg-white/20 border border-white/10")}>
+                                    <stat.icon className={cn("w-5 h-5", stat.color.replace('text-', 'text-'))} />
                                 </div>
                                 <div className="flex flex-col">
                                     <h3 className="text-2xl font-black text-white">{stat.value}</h3>
-                                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mt-1">{stat.label}</p>
+                                    <p className="text-[10px] font-black text-white/60 uppercase tracking-widest leading-none mt-1">{stat.label}</p>
                                 </div>
                             </div>
                         )}

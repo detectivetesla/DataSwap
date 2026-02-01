@@ -269,169 +269,173 @@ const DataBundles: React.FC = () => {
         const bundles = getBundlesForNetwork(selectedNetwork);
 
         const NormalModeView = () => (
-            <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                {/* Themed Header Card */}
-                <div className={cn(
-                    "p-8 rounded-[2.5rem] transition-all shadow-2xl border-2",
-                    config.color,
-                    config.borderColor,
-                    config.color === 'bg-[#FFCC00]' ? 'text-black' : 'text-white'
-                )}>
-                    {/* Header & Wallet */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div className="lg:max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
+                {/* Main Content */}
+                <div className="space-y-10">
+                    {/* Custom Header & Wallet Pill */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-center gap-5">
-                            <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center shadow-lg">
-                                <img src={config.logo} alt={selectedNetwork} className="w-10 h-10 object-contain" />
+                            <div className={cn("w-20 h-20 rounded-[1.5rem] flex items-center justify-center shadow-2xl transition-all hover:scale-105", config.color)}>
+                                <img src={config.logo} alt={selectedNetwork} className="w-12 h-12 object-contain" />
                             </div>
                             <div>
-                                <h2 className="text-3xl font-black tracking-tighter">{selectedNetwork} Data Bundle</h2>
-                                <p className="text-sm opacity-80 font-bold">Purchase {selectedNetwork} data bundles for single or multiple recipients</p>
+                                <h2 className="text-4xl font-black text-black dark:text-white tracking-tighter">{selectedNetwork} Data Bundle</h2>
+                                <p className="text-base text-slate-500 font-bold">Purchase {selectedNetwork} data bundles for single or multiple recipients</p>
                             </div>
                         </div>
-                        <div className={cn("flex items-center gap-3 px-5 py-3 rounded-2xl border-2 transition-all bg-white/10", "border-white/30")}>
-                            <Wallet className="w-5 h-5" />
-                            <p className="text-lg font-black">GH₵ {user?.walletBalance?.toFixed(2) || '0.00'}</p>
+                        <div className="px-8 py-3.5 rounded-full bg-emerald-500 text-white font-black text-sm shadow-xl shadow-emerald-500/20 w-fit">
+                            Wallet: GH₵ {user?.walletBalance?.toFixed(2) || '0.00'}
                         </div>
                     </div>
 
-                    {/* Network Switcher */}
-                    <div className="flex items-center gap-3 overflow-x-auto pb-2">
-                        {(Object.keys(networkConfig) as Network[]).map((network) => {
-                            const netConfig = networkConfig[network];
-                            const isSelected = network === selectedNetwork;
-                            return (
-                                <button
-                                    key={network}
-                                    onClick={() => handleNetworkSelect(network)}
-                                    className={cn(
-                                        "flex items-center gap-3 px-5 py-3 rounded-2xl border-2 transition-all shrink-0",
-                                        isSelected
-                                            ? "bg-white/30 border-white/50 shadow-lg"
-                                            : "bg-white/10 border-white/20 hover:bg-white/20"
-                                    )}
-                                >
-                                    <img src={netConfig.logo} alt={network} className="w-6 h-6 object-contain" />
-                                    <span className="font-black text-sm">{network}</span>
-                                    {isSelected && <CheckCircle2 className="w-4 h-4" />}
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
-
-                {/* Mode Selector & Package Count */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                    <div className="flex items-center gap-3">
-                        <span className="text-sm font-black text-black dark:text-white uppercase tracking-widest opacity-30">Mode</span>
-                        <div className="flex p-1.5 gap-2 bg-slate-100 dark:bg-white/5 rounded-2xl">
-                            <button
-                                onClick={() => setMode('normal')}
-                                className={cn("px-6 py-2 rounded-xl text-xs font-black transition-all", mode === 'normal' ? cn(config.color, config.color === 'bg-[#FFCC00]' ? 'text-black' : 'text-white', "shadow-lg") : "text-slate-400 hover:text-slate-600")}
-                            >
-                                Normal
-                            </button>
-                            <button
-                                onClick={() => setMode('grid')}
-                                className={cn("px-6 py-2 rounded-xl text-xs font-black transition-all", mode === 'grid' ? cn(config.color, config.color === 'bg-[#FFCC00]' ? 'text-black' : 'text-white', "shadow-lg") : "text-slate-400 hover:text-slate-600")}
-                            >
-                                Grid
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-xl font-black text-black dark:text-white tracking-tight">Select {selectedNetwork} Offer</h3>
+                            <button onClick={() => setCurrentStep(1)} className="text-xs font-black text-slate-400 hover:text-black dark:hover:text-white flex items-center gap-1 transition-all">
+                                <ArrowLeft className="w-3 h-3" /> Change Network
                             </button>
                         </div>
-                    </div>
-                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{bundles.length} package(s) available</div>
-                </div>
 
-                {/* Order Form Tabs */}
-                <div className="space-y-6">
-                    <div className="relative">
-                        <div className="flex gap-12 border-b border-slate-100 dark:border-white/5">
-                            {['single', 'bulk'].map((tab) => (
-                                <button
-                                    key={tab}
-                                    onClick={() => setActiveTab(tab as OrderTab)}
-                                    className={cn(
-                                        "pb-4 text-sm font-black uppercase tracking-[0.2em] transition-all relative",
-                                        activeTab === tab ? "text-black dark:text-white" : "text-slate-400 hover:text-slate-600"
-                                    )}
-                                >
-                                    {tab} Order
-                                    {activeTab === tab && (
-                                        <div className={cn("absolute bottom-0 left-0 right-0 h-1 rounded-full", config.color)} />
-                                    )}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="p-10 rounded-[3rem] bg-white dark:bg-white/[0.02] border-2 border-slate-100 dark:border-white/5 shadow-2xl space-y-10">
-                        <div className="flex items-center gap-4">
-                            <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center", config.color, "bg-opacity-20")}>
-                                {activeTab === 'single' ? <Zap className={cn("w-6 h-6", config.textColor)} /> : <Users className={cn("w-6 h-6", config.textColor)} />}
-                            </div>
-                            <h4 className="text-2xl font-black text-black dark:text-white tracking-tight capitalize">{activeTab} Order</h4>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 text-left">
-                            <div className="space-y-3">
-                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Recipient Phone Number</label>
-                                {activeTab === 'single' ? (
-                                    <input
-                                        type="tel"
-                                        value={phoneNumber}
-                                        onChange={(e) => setPhoneNumber(e.target.value)}
-                                        placeholder="024 123 4567"
-                                        className="w-full px-8 py-5 rounded-2xl bg-slate-50 dark:bg-black/20 border-2 border-transparent focus:border-slate-200 dark:focus:border-white/20 outline-none transition-all font-black text-lg"
-                                    />
-                                ) : (
-                                    <textarea
-                                        value={bulkNumbers}
-                                        onChange={(e) => setBulkNumbers(e.target.value)}
-                                        placeholder="0241234567&#10;0551234567"
-                                        rows={3}
-                                        className="w-full px-8 py-5 rounded-2xl bg-slate-50 dark:bg-black/20 border-2 border-transparent focus:border-slate-200 dark:focus:border-white/20 outline-none transition-all font-black text-lg resize-none"
-                                    />
-                                )}
-                            </div>
-                            <div className="space-y-3">
-                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Package</label>
-                                <div className="relative group">
-                                    <select
-                                        value={selectedBundle?.id}
-                                        onChange={(e) => setSelectedBundle(bundles.find(b => b.id === e.target.value) || null)}
-                                        className="w-full px-8 py-5 rounded-2xl bg-slate-50 dark:bg-black/20 border-2 border-transparent focus:border-slate-200 dark:focus:border-white/20 outline-none transition-all font-black text-lg appearance-none cursor-pointer"
-                                    >
-                                        {bundles.map(b => (
-                                            <option key={b.id} value={b.id}>{b.data} Plan - GH₵ {b.price.toFixed(2)}</option>
-                                        ))}
-                                    </select>
-                                    <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400 rotate-90 pointer-events-none transition-transform group-hover:translate-x-1" />
+                        {/* Featured Category Card */}
+                        <div className={cn("inline-block p-1 rounded-[2.8rem] bg-gradient-to-br transition-all", config.color.replace('bg-', 'from-') + '/20', "to-transparent")}>
+                            <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border-2 border-white dark:border-white/5 shadow-2xl relative overflow-hidden group min-w-[320px] sm:min-w-[450px]">
+                                <div className={cn("absolute top-8 right-8 px-5 py-2 rounded-full text-white text-[10px] font-black shadow-lg tracking-widest uppercase", config.color, config.color === 'bg-[#FFCC00]' ? 'text-black' : 'text-white')}>
+                                    Selected
+                                </div>
+                                <div className="flex items-start sm:items-center gap-8">
+                                    <div className={cn("w-20 h-20 rounded-3xl flex items-center justify-center bg-slate-50 dark:bg-white/5 shrink-0 shadow-inner")}>
+                                        <img src={config.logo} alt={selectedNetwork} className="w-10 h-10 opacity-30 grayscale" />
+                                    </div>
+                                    <div className="space-y-2 text-left">
+                                        <h4 className="text-2xl font-black text-black dark:text-white tracking-tight">Master Beneficiary Data Bundle</h4>
+                                        <p className="text-sm text-slate-500 font-bold max-w-[250px] leading-relaxed">The UP2U data bundle from the {selectedNetwork} Group Share pool.</p>
+                                        <div className="flex items-center gap-5 pt-4">
+                                            <span className="flex items-center gap-2 text-[10px] font-black text-slate-400"><Calendar className="w-3.5 h-3.5 stroke-[3px]" /> 30-90 Days</span>
+                                            <span className="flex items-center gap-2 text-[10px] font-black text-slate-400"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 stroke-[3px]" /> Active</span>
+                                            <span className="flex items-center gap-2 text-[10px] font-black text-slate-400"><List className="w-3.5 h-3.5 stroke-[3px]" /> {bundles.length} Packages</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="flex items-center gap-4 ml-1 group cursor-pointer w-fit" onClick={() => setIsRecurring(!isRecurring)}>
-                            <div className={cn(
-                                "w-7 h-7 rounded-lg border-2 transition-all flex items-center justify-center",
-                                isRecurring ? cn(config.color, config.borderColor) : "border-slate-200 dark:border-white/10"
-                            )}>
-                                {isRecurring && <CheckCircle2 className={cn("w-5 h-5", config.color === 'bg-[#FFCC00]' ? 'text-black' : 'text-white')} />}
+                    {/* Mode Selector & Package Count */}
+                    <div className="space-y-6">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                            <div className="flex items-center gap-3">
+                                <span className="text-sm font-black text-black dark:text-white uppercase tracking-widest opacity-30">Mode</span>
+                                <div className="flex p-1.5 gap-2 bg-slate-100 dark:bg-white/5 rounded-2xl">
+                                    <button
+                                        onClick={() => setMode('normal')}
+                                        className={cn("px-6 py-2 rounded-xl text-xs font-black transition-all", mode === 'normal' ? cn(config.color, config.color === 'bg-[#FFCC00]' ? 'text-black' : 'text-white', "shadow-lg") : "text-slate-400 hover:text-slate-600")}
+                                    >
+                                        Normal
+                                    </button>
+                                    <button
+                                        onClick={() => setMode('grid')}
+                                        className={cn("px-6 py-2 rounded-xl text-xs font-black transition-all", mode === 'grid' ? cn(config.color, config.color === 'bg-[#FFCC00]' ? 'text-black' : 'text-white', "shadow-lg") : "text-slate-400 hover:text-slate-600")}
+                                    >
+                                        Grid
+                                    </button>
+                                </div>
                             </div>
-                            <label className="text-sm font-black text-slate-500 group-hover:text-black dark:group-hover:text-white transition-colors cursor-pointer flex items-center gap-2">
-                                <Calendar className="w-4 h-4" /> Make this a recurring order
-                            </label>
+                            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{bundles.length} package(s) available</div>
                         </div>
 
-                        <button
-                            onClick={handlePayment}
-                            disabled={processing || !selectedBundle || (activeTab === 'single' ? !phoneNumber : !bulkNumbers)}
-                            className={cn(
-                                "w-full py-6 rounded-[2rem] font-black text-white shadow-2xl transition-all flex items-center justify-center gap-3 text-lg uppercase tracking-widest",
-                                config.color, config.color === 'bg-[#FFCC00]' ? 'text-black' : 'text-white',
-                                "hover:shadow-2xl hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
-                            )}
-                        >
-                            {processing ? <Loader2 className="w-6 h-6 animate-spin" /> : <span>Place Order</span>}
-                        </button>
+                        {/* Order Form Tabs */}
+                        <div className="space-y-6">
+                            <div className="relative">
+                                <div className="flex gap-12 border-b border-slate-100 dark:border-white/5">
+                                    {['single', 'bulk'].map((tab) => (
+                                        <button
+                                            key={tab}
+                                            onClick={() => setActiveTab(tab as OrderTab)}
+                                            className={cn(
+                                                "pb-4 text-sm font-black uppercase tracking-[0.2em] transition-all relative",
+                                                activeTab === tab ? "text-black dark:text-white" : "text-slate-400 hover:text-slate-600"
+                                            )}
+                                        >
+                                            {tab} Order
+                                            {activeTab === tab && (
+                                                <div className={cn("absolute bottom-0 left-0 right-0 h-1 rounded-full", config.color)} />
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="p-10 rounded-[3rem] bg-white dark:bg-white/[0.02] border-2 border-slate-100 dark:border-white/5 shadow-2xl space-y-10">
+                                <div className="flex items-center gap-4">
+                                    <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center", config.color, "bg-opacity-20")}>
+                                        {activeTab === 'single' ? <Zap className={cn("w-6 h-6", config.textColor)} /> : <Users className={cn("w-6 h-6", config.textColor)} />}
+                                    </div>
+                                    <h4 className="text-2xl font-black text-black dark:text-white tracking-tight capitalize">{activeTab} Order</h4>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 text-left">
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Recipient Phone Number</label>
+                                        {activeTab === 'single' ? (
+                                            <input
+                                                type="tel"
+                                                value={phoneNumber}
+                                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                                placeholder="024 123 4567"
+                                                className="w-full px-8 py-5 rounded-2xl bg-slate-50 dark:bg-black/20 border-2 border-transparent focus:border-slate-200 dark:focus:border-white/20 outline-none transition-all font-black text-lg"
+                                            />
+                                        ) : (
+                                            <textarea
+                                                value={bulkNumbers}
+                                                onChange={(e) => setBulkNumbers(e.target.value)}
+                                                placeholder="0241234567&#10;0551234567"
+                                                rows={3}
+                                                className="w-full px-8 py-5 rounded-2xl bg-slate-50 dark:bg-black/20 border-2 border-transparent focus:border-slate-200 dark:focus:border-white/20 outline-none transition-all font-black text-lg resize-none"
+                                            />
+                                        )}
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Package</label>
+                                        <div className="relative group">
+                                            <select
+                                                value={selectedBundle?.id}
+                                                onChange={(e) => setSelectedBundle(bundles.find(b => b.id === e.target.value) || null)}
+                                                className="w-full px-8 py-5 rounded-2xl bg-slate-50 dark:bg-black/20 border-2 border-transparent focus:border-slate-200 dark:focus:border-white/20 outline-none transition-all font-black text-lg appearance-none cursor-pointer"
+                                            >
+                                                {bundles.map(b => (
+                                                    <option key={b.id} value={b.id}>{b.data} Plan - GH₵ {b.price.toFixed(2)}</option>
+                                                ))}
+                                            </select>
+                                            <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400 rotate-90 pointer-events-none transition-transform group-hover:translate-x-1" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-4 ml-1 group cursor-pointer w-fit" onClick={() => setIsRecurring(!isRecurring)}>
+                                    <div className={cn(
+                                        "w-7 h-7 rounded-lg border-2 transition-all flex items-center justify-center",
+                                        isRecurring ? cn(config.color, config.borderColor) : "border-slate-200 dark:border-white/10"
+                                    )}>
+                                        {isRecurring && <CheckCircle2 className={cn("w-5 h-5", config.color === 'bg-[#FFCC00]' ? 'text-black' : 'text-white')} />}
+                                    </div>
+                                    <label className="text-sm font-black text-slate-500 group-hover:text-black dark:group-hover:text-white transition-colors cursor-pointer flex items-center gap-2">
+                                        <Calendar className="w-4 h-4" /> Make this a recurring order
+                                    </label>
+                                </div>
+
+                                <button
+                                    onClick={handlePayment}
+                                    disabled={processing || !selectedBundle || (activeTab === 'single' ? !phoneNumber : !bulkNumbers)}
+                                    className={cn(
+                                        "w-full py-6 rounded-[2rem] font-black text-white shadow-2xl transition-all flex items-center justify-center gap-3 text-lg uppercase tracking-widest",
+                                        config.color, config.color === 'bg-[#FFCC00]' ? 'text-black' : 'text-white',
+                                        "hover:shadow-2xl hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
+                                    )}
+                                >
+                                    {processing ? <Loader2 className="w-6 h-6 animate-spin" /> : <span>Place Order</span>}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -476,37 +480,45 @@ const DataBundles: React.FC = () => {
                         <div
                             key={bundle.id}
                             className={cn(
-                                'relative p-6 rounded-[2rem] bg-white dark:bg-white/[0.02] border-2 transition-all text-left group flex flex-col',
+                                'relative p-6 rounded-[1.5rem] bg-[#0B0F19] border-2 transition-all text-left group flex flex-col',
                                 'hover:shadow-2xl active:scale-[0.98]',
-                                'border-slate-200 dark:border-white/10',
-                                `hover:${config.borderColor.replace('border-', 'border-')}`
+                                config.borderColor.replace('border-', 'border-').replace('border-[#FFCC00]', 'border-[#FFCC00]/20').replace('border-[#E60000]', 'border-[#E60000]/20').replace('border-[#003876]', 'border-[#003876]/20')
                             )}
                         >
-                            {bundle.popular && <div className={cn("absolute -top-3 -right-2 px-4 py-1.5 rounded-full text-white text-[10px] font-black shadow-lg", selectedNetwork === 'MTN' ? 'bg-amber-500' : config.color)}>POPULAR</div>}
-
-                            {/* Icon badge */}
-                            <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mb-4", config.color, "bg-opacity-10")}>
-                                <Zap className={cn("w-6 h-6", config.textColor)} />
-                            </div>
-
-                            <div className="flex-1 space-y-4">
-                                <div>
-                                    <div className={cn('inline-flex px-3 py-1 rounded-lg mb-3 text-[10px] font-black tracking-widest uppercase', config.badgeBg)}>{selectedNetwork}</div>
-                                    <h4 className="text-3xl font-black text-black dark:text-white tracking-tighter">{bundle.data}</h4>
-                                    <p className="text-sm text-slate-500 font-bold">{bundle.validity}</p>
+                            <div className="flex justify-between items-start mb-6">
+                                <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center bg-white/5")}>
+                                    <Zap className={cn("w-5 h-5", config.textColor)} />
                                 </div>
-                                <div className="space-y-1">
-                                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Price</div>
-                                    <div className="flex items-baseline gap-2">
-                                        <span className={cn('text-2xl font-black', config.textColor)}>GH₵ {bundle.price.toFixed(2)}</span>
-                                        {bundle.discount && <span className="text-sm text-slate-400 line-through font-bold">GH₵ {(bundle.price + bundle.discount).toFixed(2)}</span>}
+                                <div className="flex flex-col items-end">
+                                    <div className="flex flex-col items-end leading-none">
+                                        <div className="px-2 py-0.5 rounded-sm bg-emerald-500/20 text-emerald-500 text-[8px] font-black tracking-tighter mb-1">
+                                            AGENT PRICE
+                                        </div>
+                                        <div className="text-white/40 text-[8px] font-black mr-1">PRICE</div>
+                                    </div>
+                                    <div className={cn('text-xl font-black mt-1', config.textColor)}>
+                                        GH₵ {bundle.price.toFixed(2)}
                                     </div>
                                 </div>
                             </div>
+
+                            <div className="flex-1 mb-8">
+                                <div className="flex items-baseline gap-2 mb-2">
+                                    <h4 className="text-5xl font-black text-white tracking-tighter leading-none">
+                                        {bundle.data.split(' ')[0]}<span className="text-4xl">{bundle.data.split(' ')[1] || ''}</span>
+                                    </h4>
+                                    <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">{selectedNetwork}</span>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">{bundle.validity}</span>
+                                    <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">RELIABLE</span>
+                                </div>
+                            </div>
+
                             <button
                                 onClick={() => handleBundleSelect(bundle)}
                                 className={cn(
-                                    "mt-6 w-full py-3.5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-lg",
+                                    "w-full py-4 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-lg",
                                     config.buttonColor,
                                     "hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]"
                                 )}
