@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Wallet, Grid3x3, List, CheckCircle2, Loader2, XCircle, Zap, Users, Info, Calendar, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Wallet, Grid3x3, List, CheckCircle2, Loader2, XCircle, Zap, Users, Info, Calendar, ChevronRight, Plus } from 'lucide-react';
 import axios from 'axios';
 import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
@@ -23,6 +23,11 @@ interface Bundle {
     is_active?: boolean;
 }
 
+interface Recipient {
+    phone: string;
+    bundleId: string;
+}
+
 const DataBundles: React.FC = () => {
     const { user } = useAuth();
     const [currentStep, setCurrentStep] = useState<Step>(1);
@@ -30,8 +35,7 @@ const DataBundles: React.FC = () => {
     const [selectedBundle, setSelectedBundle] = useState<Bundle | null>(null);
     const [mode, setMode] = useState<PurchaseMode>('normal');
     const [activeTab, setActiveTab] = useState<OrderTab>('single');
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [bulkNumbers, setBulkNumbers] = useState('');
+    const [recipients, setRecipients] = useState<Recipient[]>([{ phone: '', bundleId: '' }]);
     const [isRecurring, setIsRecurring] = useState(false);
     const [paymentMethod, _] = useState<'wallet'>('wallet');
     const [allBundles, setAllBundles] = useState<Bundle[]>([]);
@@ -108,38 +112,100 @@ const DataBundles: React.FC = () => {
         const netBundles = getBundlesForNetwork(network);
         if (netBundles.length > 0) {
             setSelectedBundle(netBundles[0]);
+            setRecipients([{ phone: '', bundleId: netBundles[0].id }]); // Pre-select bundle for single recipient
+        } else {
+            setRecipients([{ phone: '', bundleId: '' }]);
         }
         setCurrentStep(2);
     };
 
     const handleBundleSelect = (bundle: Bundle) => {
         setSelectedBundle(bundle);
+        setRecipients([{ phone: '', bundleId: bundle.id }]); // Set bundle for grid mode single recipient
         if (mode === 'grid') {
             setCurrentStep(3);
         }
     };
 
-    const handlePayment = async () => {
-        if (!selectedBundle || (activeTab === 'single' ? !phoneNumber : !bulkNumbers)) return;
+    const addRecipient = () => {
+        setRecipients([...recipients, { phone: '', bundleId: '' }]);
+    };
 
+    const removeRecipient = (index: number) => {
+        if (recipients.length > 1) {
+            const newRecipients = [...recipients];
+            newRecipients.splice(index, 1);
+            setRecipients(newRecipients);
+        }
+    };
+
+    const updateRecipient = (index: number, field: keyof Recipient, value: string) => {
+        const newRecipients = [...recipients];
+        newRecipients[index][field] = value;
+        setRecipients(newRecipients);
+    };
+
+    const handlePayment = async () => {
+        if (!user || !selectedNetwork) return;
         setProcessing(true);
         setMessage(null);
 
         try {
-            const response = await api.post('/dashboard/purchase', {
-                bundleId: selectedBundle.id,
-                phone: activeTab === 'single' ? phoneNumber : bulkNumbers
-            });
+            const validRecipients = activeTab === 'single' && currentStep === 2
+                ? [recipients[0]]
+                : (currentStep === 3 && mode === 'grid' ? [recipients[0]] : recipients);
 
-            setMessage({ type: 'success', text: response.data.message });
-            setTimeout(() => {
-                resetFlow();
-            }, 3000);
-        } catch (error: any) {
-            setMessage({
-                type: 'error',
-                text: error.response?.data?.message || 'Payment failed. Please try again.'
-            });
+            const filteredRecipients = validRecipients.filter(r => r.phone && r.bundleId);
+
+            if (filteredRecipients.length === 0) {
+                setMessage({ type: 'error', text: 'Please provide at least one recipient with a phone number and package.' });
+                setProcessing(false);
+                return;
+            }
+
+            let successCount = 0;
+            let errorCount = 0;
+            let errorMessages: string[] = [];
+
+            for (const recipient of filteredRecipients) {
+                const bundle = allBundles.find(b => b.id === recipient.bundleId);
+                if (!bundle) {
+                    errorCount++;
+                    errorMessages.push(`Bundle not found for recipient ${recipient.phone}.`);
+                    continue;
+                }
+
+                try {
+                    await api.post('/dashboard/purchase', {
+                        bundleId: bundle.id,
+                        phoneNumber: recipient.phone,
+                        isRecurring
+                    });
+                    successCount++;
+                } catch (err: any) {
+                    console.error(`Error purchasing for ${recipient.phone}:`, err);
+                    errorCount++;
+                    errorMessages.push(`Failed for ${recipient.phone}: ${err.response?.data?.message || 'Unknown error'}`);
+                }
+            }
+
+            if (successCount > 0) {
+                setMessage({
+                    type: errorCount === 0 ? 'success' : 'error',
+                    text: errorCount === 0
+                        ? `Successfully processed ${successCount} purchase(s)!`
+                        : `Processed ${successCount} successful and ${errorCount} failed purchase(s). Details: ${errorMessages.join('; ')}`
+                });
+                if (errorCount === 0) {
+                    setTimeout(() => {
+                        resetFlow();
+                    }, 3000);
+                }
+            } else {
+                setMessage({ type: 'error', text: 'All purchase attempts failed. Please check your balance or try again later.' });
+            }
+        } catch (err: any) {
+            setMessage({ type: 'error', text: err.response?.data?.message || 'Transaction failed' });
         } finally {
             setProcessing(false);
         }
@@ -149,8 +215,7 @@ const DataBundles: React.FC = () => {
         setCurrentStep(1);
         setSelectedNetwork(null);
         setSelectedBundle(null);
-        setPhoneNumber('');
-        setBulkNumbers('');
+        setRecipients([{ phone: '', bundleId: '' }]);
         setIsRecurring(false);
         setMessage(null);
     };
@@ -319,7 +384,10 @@ const DataBundles: React.FC = () => {
                                 {['single', 'bulk'].map((tab) => (
                                     <button
                                         key={tab}
-                                        onClick={() => setActiveTab(tab as OrderTab)}
+                                        onClick={() => {
+                                            setActiveTab(tab as OrderTab);
+                                            setRecipients([{ phone: '', bundleId: selectedBundle?.id || '' }]);
+                                        }}
                                         className={cn(
                                             "pb-4 text-sm font-black uppercase tracking-[0.2em] transition-all relative",
                                             activeTab === tab ? "text-black dark:text-white" : "text-slate-400 hover:text-slate-600"
@@ -342,42 +410,87 @@ const DataBundles: React.FC = () => {
                                 <h4 className="text-2xl font-black text-black dark:text-white tracking-tight capitalize">{activeTab} Order</h4>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 text-left">
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Recipient Phone Number</label>
-                                    {activeTab === 'single' ? (
-                                        <input
-                                            type="tel"
-                                            value={phoneNumber}
-                                            onChange={(e) => setPhoneNumber(e.target.value)}
-                                            placeholder="024 123 4567"
-                                            className="w-full px-8 py-5 rounded-2xl bg-slate-50 dark:bg-black/20 border-2 border-transparent focus:border-slate-200 dark:focus:border-white/20 outline-none transition-all font-black text-lg"
-                                        />
-                                    ) : (
-                                        <textarea
-                                            value={bulkNumbers}
-                                            onChange={(e) => setBulkNumbers(e.target.value)}
-                                            placeholder="0241234567&#10;0551234567"
-                                            rows={3}
-                                            className="w-full px-8 py-5 rounded-2xl bg-slate-50 dark:bg-black/20 border-2 border-transparent focus:border-slate-200 dark:focus:border-white/20 outline-none transition-all font-black text-lg resize-none"
-                                        />
-                                    )}
-                                </div>
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Package</label>
-                                    <div className="relative group">
-                                        <select
-                                            value={selectedBundle?.id}
-                                            onChange={(e) => setSelectedBundle(bundles.find(b => b.id === e.target.value) || null)}
-                                            className="w-full px-8 py-5 rounded-2xl bg-slate-50 dark:bg-black/20 border-2 border-transparent focus:border-slate-200 dark:focus:border-white/20 outline-none transition-all font-black text-lg appearance-none cursor-pointer"
-                                        >
-                                            {bundles.map(b => (
-                                                <option key={b.id} value={b.id}>{b.data} Plan - GH₵ {b.price.toFixed(2)}</option>
-                                            ))}
-                                        </select>
-                                        <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400 rotate-90 pointer-events-none transition-transform group-hover:translate-x-1" />
+                            <div className="space-y-6">
+                                {activeTab === 'single' ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 text-left">
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Recipient Phone Number</label>
+                                            <input
+                                                type="number"
+                                                value={recipients[0].phone}
+                                                onChange={(e) => updateRecipient(0, 'phone', e.target.value)}
+                                                placeholder="024 123 4567"
+                                                className="w-full px-8 py-5 rounded-2xl bg-slate-50 dark:bg-black/20 border-2 border-transparent focus:border-slate-200 dark:focus:border-white/20 outline-none transition-all font-black text-lg"
+                                            />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Package</label>
+                                            <div className="relative group">
+                                                <select
+                                                    value={recipients[0].bundleId}
+                                                    onChange={(e) => {
+                                                        updateRecipient(0, 'bundleId', e.target.value);
+                                                        setSelectedBundle(bundles.find(b => b.id === e.target.value) || null);
+                                                    }}
+                                                    className="w-full px-8 py-5 rounded-2xl bg-slate-50 dark:bg-black/20 border-2 border-transparent focus:border-slate-200 dark:focus:border-white/20 outline-none transition-all font-black text-lg appearance-none cursor-pointer"
+                                                >
+                                                    <option value="">Select a package</option>
+                                                    {bundles.map(b => (
+                                                        <option key={b.id} value={b.id}>{b.data} Plan - GH₵ {b.price.toFixed(2)}</option>
+                                                    ))}
+                                                </select>
+                                                <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400 rotate-90 pointer-events-none transition-transform group-hover:translate-x-1" />
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        {recipients.map((recipient, index) => (
+                                            <div key={index} className="flex flex-col md:flex-row gap-4 items-end animate-in fade-in slide-in-from-left-4 duration-300">
+                                                <div className="flex-1 space-y-3 w-full">
+                                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Recipient {index + 1} Phone</label>
+                                                    <input
+                                                        type="number"
+                                                        value={recipient.phone}
+                                                        onChange={(e) => updateRecipient(index, 'phone', e.target.value)}
+                                                        placeholder="024 123 4567"
+                                                        className="w-full px-6 py-4 rounded-xl bg-slate-50 dark:bg-black/20 border-2 border-transparent focus:border-slate-200 dark:focus:border-white/20 outline-none transition-all font-black"
+                                                    />
+                                                </div>
+                                                <div className="flex-1 space-y-3 w-full">
+                                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Package</label>
+                                                    <div className="relative group">
+                                                        <select
+                                                            value={recipient.bundleId}
+                                                            onChange={(e) => updateRecipient(index, 'bundleId', e.target.value)}
+                                                            className="w-full px-6 py-4 rounded-xl bg-slate-50 dark:bg-black/20 border-2 border-transparent focus:border-slate-200 dark:focus:border-white/20 outline-none transition-all font-black appearance-none cursor-pointer"
+                                                        >
+                                                            <option value="">Select a package</option>
+                                                            {bundles.map(b => (
+                                                                <option key={b.id} value={b.id}>{b.data} Plan - GH₵ {b.price.toFixed(2)}</option>
+                                                            ))}
+                                                        </select>
+                                                        <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 rotate-90 pointer-events-none transition-transform group-hover:translate-x-1" />
+                                                    </div>
+                                                </div>
+                                                {recipients.length > 1 && (
+                                                    <button
+                                                        onClick={() => removeRecipient(index)}
+                                                        className="p-4 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all mb-0.5"
+                                                    >
+                                                        <XCircle className="w-5 h-5" />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ))}
+                                        <button
+                                            onClick={addRecipient}
+                                            className={cn("flex items-center gap-2 px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all mt-4", config.color, config.color === 'bg-[#FFCC00]' ? 'text-black' : 'text-white', "hover:scale-105 shadow-lg")}
+                                        >
+                                            <Plus className="w-4 h-4" /> Add Recipient
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="flex items-center gap-4 ml-1 group cursor-pointer w-fit" onClick={() => setIsRecurring(!isRecurring)}>
@@ -394,7 +507,7 @@ const DataBundles: React.FC = () => {
 
                             <button
                                 onClick={handlePayment}
-                                disabled={processing || !selectedBundle || (activeTab === 'single' ? !phoneNumber : !bulkNumbers)}
+                                disabled={processing || recipients.some(r => !r.phone || !r.bundleId)}
                                 className={cn(
                                     "w-full py-6 rounded-[2rem] font-black text-white shadow-2xl transition-all flex items-center justify-center gap-3 text-lg uppercase tracking-widest",
                                     config.color, config.color === 'bg-[#FFCC00]' ? 'text-black' : 'text-white',
@@ -524,9 +637,9 @@ const DataBundles: React.FC = () => {
                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-4">Recipient Phone Number</label>
                             <div className="relative">
                                 <input
-                                    type="tel"
-                                    value={phoneNumber}
-                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    type="number"
+                                    value={recipients[0].phone}
+                                    onChange={(e) => updateRecipient(0, 'phone', e.target.value)}
                                     placeholder="Enter recipient number"
                                     className="w-full px-8 py-5 rounded-2xl bg-slate-50 dark:bg-black/20 border-2 border-transparent focus:border-slate-200 dark:focus:border-white/20 outline-none transition-all font-black text-lg"
                                 />
@@ -545,7 +658,7 @@ const DataBundles: React.FC = () => {
 
                         <button
                             onClick={handlePayment}
-                            disabled={processing || !phoneNumber}
+                            disabled={processing || !recipients[0].phone}
                             className={cn(
                                 "w-full py-6 rounded-3xl font-black text-white shadow-2xl transition-all flex items-center justify-center gap-3 text-lg uppercase tracking-[0.2em]",
                                 config.color, config.color === 'bg-[#FFCC00]' ? 'text-black' : 'text-white',
