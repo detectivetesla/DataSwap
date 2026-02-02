@@ -13,6 +13,7 @@ const paystackService = {
             const response = await axios.post(`${PAYSTACK_BASE_URL}/transaction/initialize`, {
                 email,
                 amount: Math.round(amount * 100), // Paystack expects amount in pesewas
+                currency: 'GHS',
                 callback_url: `${process.env.FRONTEND_URL}/dashboard/wallet`,
                 metadata
             }, {
@@ -20,8 +21,9 @@ const paystackService = {
             });
             return response.data.data; // Returns authorization_url and reference
         } catch (error) {
-            console.error('Paystack Initialize Error:', error.response?.data || error.message);
-            throw error;
+            const errorDetail = error.response?.data?.message || error.message;
+            console.error('Paystack Initialize Error:', errorDetail);
+            throw new Error(errorDetail);
         }
     },
 
