@@ -33,7 +33,7 @@ const Profile: React.FC = () => {
                                 <div className="w-24 h-24 rounded-[2rem] bg-primary flex items-center justify-center text-white text-4xl font-black shadow-2xl shadow-primary/30 ring-4 ring-white dark:ring-slate-800">
                                     {(user?.fullName || user?.email)?.charAt(0).toUpperCase()}
                                 </div>
-                                <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-emerald-500 rounded-full border-4 border-white dark:border-slate-800 flex items-center justify-center shadow-lg">
+                                <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-blue-500 rounded-full border-4 border-white dark:border-slate-800 flex items-center justify-center shadow-lg">
                                     <Check className="w-4 h-4 text-white" strokeWidth={3} />
                                 </div>
                             </div>
@@ -53,7 +53,7 @@ const Profile: React.FC = () => {
                                     </div>
                                     <span className="text-sm font-bold text-slate-600 dark:text-slate-400 truncate max-w-[180px]">{user?.email}</span>
                                 </div>
-                                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                <CheckCircle2 className="w-4 h-4 text-blue-500" />
                             </div>
                             <div className="flex items-center justify-between group/item">
                                 <div className="flex items-center gap-3">
@@ -62,18 +62,18 @@ const Profile: React.FC = () => {
                                     </div>
                                     <span className="text-sm font-bold text-slate-600 dark:text-slate-400">{user?.phoneNumber || 'Not provided'}</span>
                                 </div>
-                                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                <CheckCircle2 className="w-4 h-4 text-blue-500" />
                             </div>
                         </div>
 
                         {/* Financial Stats in Card */}
                         <div className="mt-8 pt-8 border-t border-slate-100 dark:border-white/5 space-y-4">
                             <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-400">
+                                <div className="flex items-center gap-3 text-blue-600 dark:text-blue-400">
                                     <Wallet className="w-4 h-4" />
                                     <span className="text-sm font-bold">Wallet Balance</span>
                                 </div>
-                                <span className="text-base font-black text-emerald-600 dark:text-emerald-400">GH₵ {user?.walletBalance?.toFixed(2) || '0.00'}</span>
+                                <span className="text-base font-black text-blue-600 dark:text-blue-400">GH₵ {user?.walletBalance?.toFixed(2) || '0.00'}</span>
                             </div>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3 text-blue-600 dark:text-blue-400 text-opacity-80">
@@ -82,7 +82,7 @@ const Profile: React.FC = () => {
                                 </div>
                                 <span className={cn(
                                     "px-2 py-0.5 rounded text-[10px] font-black",
-                                    user?.isBlocked ? "bg-red-500/10 text-red-500" : "bg-emerald-500/10 text-emerald-500"
+                                    user?.isBlocked ? "bg-red-500/10 text-red-500" : "bg-blue-500/10 text-blue-500"
                                 )}>
                                     {user?.isBlocked ? 'blocked' : 'active'}
                                 </span>
@@ -158,12 +158,12 @@ const Profile: React.FC = () => {
                                     <p className="text-xs font-bold text-slate-500 dark:text-slate-400 truncate">{user?.email}</p>
                                 </div>
                             </div>
-                            <div className="p-5 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
-                                    <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                            <div className="p-5 rounded-2xl bg-blue-500/5 border border-blue-500/10 flex items-start gap-4">
+                                <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+                                    <CheckCircle2 className="w-5 h-5 text-blue-500" />
                                 </div>
                                 <div className="min-w-0">
-                                    <p className="text-sm font-black text-emerald-500">Phone Number</p>
+                                    <p className="text-sm font-black text-blue-500">Phone Number</p>
                                     <p className="text-xs font-bold text-slate-500 dark:text-slate-400 truncate">{user?.phoneNumber || 'Not provided'}</p>
                                 </div>
                             </div>
@@ -188,15 +188,15 @@ const Profile: React.FC = () => {
                                 </div>
                                 <ExternalLink className="w-4 h-4 text-blue-500 opacity-0 group-hover:opacity-100 transition-all" />
                             </button>
-                            <button className="w-full p-4 rounded-xl bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/10 flex items-center justify-between group transition-all">
+                            <button className="w-full p-4 rounded-xl bg-blue-500/5 hover:bg-blue-500/10 border border-blue-500/10 flex items-center justify-between group transition-all">
                                 <div className="flex items-center gap-4">
-                                    <MessageCircle className="w-5 h-5 text-emerald-500" />
+                                    <MessageCircle className="w-5 h-5 text-blue-500" />
                                     <div className="text-left">
-                                        <p className="text-sm font-black text-emerald-500">Contact Support</p>
+                                        <p className="text-sm font-black text-blue-500">Contact Support</p>
                                         <p className="text-[10px] font-bold text-slate-500">Get help via WhatsApp</p>
                                     </div>
                                 </div>
-                                <ExternalLink className="w-4 h-4 text-emerald-500 opacity-0 group-hover:opacity-100 transition-all" />
+                                <ExternalLink className="w-4 h-4 text-blue-500 opacity-0 group-hover:opacity-100 transition-all" />
                             </button>
                             <button className="w-full p-4 rounded-xl bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 flex items-center justify-between group transition-all">
                                 <div className="flex items-center gap-4">

@@ -102,7 +102,7 @@ const Transactions: React.FC = () => {
                                     <td className="px-6 py-5">
                                         <div className="flex items-center gap-3">
                                             {item.type === 'credit' ? (
-                                                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                                                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
                                                     <ArrowDownLeft className="w-5 h-5" />
                                                 </div>
                                             ) : (
@@ -118,7 +118,7 @@ const Transactions: React.FC = () => {
                                         <div className="mt-1">
                                             <span className={cn(
                                                 "px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border",
-                                                item.status === 'success' ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :
+                                                item.status === 'success' ? "bg-blue-500/10 text-blue-600 border-blue-500/20" :
                                                     item.status === 'processing' ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" :
                                                         "bg-red-500/10 text-red-600 border-red-500/20"
                                             )}>
@@ -127,7 +127,7 @@ const Transactions: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-5 font-black">
-                                        <span className={item.type === 'credit' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}>
+                                        <span className={item.type === 'credit' ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400'}>
                                             {item.type === 'credit' ? '+' : '-'} GH₵ {Number(item.amount).toFixed(2)}
                                         </span>
                                     </td>

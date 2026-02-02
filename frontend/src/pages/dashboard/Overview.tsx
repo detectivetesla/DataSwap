@@ -84,7 +84,7 @@ const Overview: React.FC = () => {
 
     const statCards = [
         { label: 'Wallet Balance', value: `GH₵ ${stats.walletBalance.toLocaleString()}`, icon: Wallet, color: 'text-orange-600 dark:text-orange-400', bgColor: 'bg-orange-500/10', iconBg: 'bg-orange-500', trend: '+0.0%', path: '/dashboard/wallet' },
-        { label: 'Total Orders', value: stats.totalOrders.toString(), icon: ShoppingBag, color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', iconBg: 'bg-emerald-500', trend: '+0', path: '/dashboard/orders' },
+        { label: 'Total Orders', value: stats.totalOrders.toString(), icon: ShoppingBag, color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-500/10', iconBg: 'bg-blue-500', trend: '+0', path: '/dashboard/orders' },
         { label: 'Processing Orders', value: stats.processingOrders.toString(), icon: Clock, color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-500/10', iconBg: 'bg-blue-500', trend: '0', path: '/dashboard/orders?status=processing' },
         { label: 'Completed Orders', value: stats.completedOrders.toString(), icon: CheckCircle2, color: 'text-purple-600 dark:text-purple-400', bgColor: 'bg-purple-500/10', iconBg: 'bg-purple-500', trend: '+0', path: '/dashboard/orders?status=completed' },
     ];
@@ -159,7 +159,7 @@ const Overview: React.FC = () => {
                                         <div className="flex flex-col items-end gap-1">
                                             <span className={cn(
                                                 "px-2 py-1 rounded-full text-[10px] font-black tracking-tighter",
-                                                stat.trend.startsWith('+') ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600"
+                                                stat.trend.startsWith('+') ? "bg-blue-500/10 text-blue-600" : "bg-red-500/10 text-red-600"
                                             )}>
                                                 {stat.trend}
                                             </span>
@@ -188,7 +188,7 @@ const Overview: React.FC = () => {
                     <div className="p-5 md:p-8 rounded-[2.5rem] bg-white dark:bg-white/5 shadow-sm border border-slate-100 dark:border-white/10 space-y-6">
                         <div className="flex md:items-center justify-between flex-col md:flex-row gap-4">
                             <h3 className="text-lg md:text-xl font-black text-black dark:text-white flex items-center gap-2">
-                                <ShoppingBag className="w-5 h-5 text-emerald-500" />
+                                <ShoppingBag className="w-5 h-5 text-blue-500" />
                                 <span>Recent Orders</span>
                             </h3>
                             <button className="text-[10px] md:text-xs font-black text-primary uppercase tracking-widest hover:underline text-left">View History</button>
@@ -228,7 +228,7 @@ const Overview: React.FC = () => {
                                             <td className="py-4 text-right">
                                                 <span className={cn(
                                                     "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
-                                                    order.status === 'success' ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/10" :
+                                                    order.status === 'success' ? "bg-blue-500/10 text-blue-600 border-blue-500/10" :
                                                         order.status === 'processing' ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/10" :
                                                             "bg-red-500/10 text-red-600 border-red-500/10"
                                                 )}>
@@ -300,7 +300,7 @@ const Overview: React.FC = () => {
                                             </p>
                                         </div>
                                     </div>
-                                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                    <CheckCircle2 className="w-4 h-4 text-blue-500" />
                                 </div>
                             ))}
                         </div>

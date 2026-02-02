@@ -76,7 +76,7 @@ const AdminSettingsPage: React.FC = () => {
                 {message && (
                     <div className={cn(
                         "px-6 py-3 rounded-2xl font-bold text-sm animate-in fade-in slide-in-from-top-2",
-                        message.type === 'success' ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "bg-red-500/10 text-red-500 border border-red-500/20"
+                        message.type === 'success' ? "bg-blue-500/10 text-blue-500 border border-blue-500/20" : "bg-red-500/10 text-red-500 border border-red-500/20"
                     )}>
                         {message.text}
                     </div>
@@ -243,8 +243,8 @@ const AdminSettingsPage: React.FC = () => {
                                     <div>
                                         <p className="text-sm font-black text-slate-900 dark:text-white">{op.label}</p>
                                         <div className="flex items-center justify-center gap-1.5 mt-1">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                            <span className="text-[10px] font-black uppercase text-emerald-500 tracking-wider font-mono">{op.status}</span>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                                            <span className="text-[10px] font-black uppercase text-blue-500 tracking-wider font-mono">{op.status}</span>
                                         </div>
                                     </div>
                                 </div>

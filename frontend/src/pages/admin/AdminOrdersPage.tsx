@@ -84,17 +84,19 @@ const AdminOrdersPage: React.FC = () => {
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {[
-                    { label: 'Total Orders', value: orders.length.toString(), icon: ShoppingBag, color: 'text-blue-500' },
-                    { label: 'Successful', value: orders.filter(o => o.status === 'success').length.toString(), icon: CheckCircle2, color: 'text-emerald-500' },
-                    { label: 'Processing', value: orders.filter(o => o.status === 'processing').length.toString(), icon: Clock, color: 'text-amber-500' },
-                    { label: 'Failed', value: orders.filter(o => o.status === 'failed').length.toString(), icon: XCircle, color: 'text-red-500' },
+                    { label: 'Total Orders', value: orders.length.toString(), icon: ShoppingBag, color: 'text-purple-600', bg: 'bg-purple-600' },
+                    { label: 'Successful', value: orders.filter(o => o.status === 'success').length.toString(), icon: CheckCircle2, color: 'text-blue-600', bg: 'bg-blue-600' },
+                    { label: 'Processing', value: orders.filter(o => o.status === 'processing').length.toString(), icon: Clock, color: 'text-amber-600', bg: 'bg-amber-500' },
+                    { label: 'Failed', value: orders.filter(o => o.status === 'failed').length.toString(), icon: XCircle, color: 'text-red-600', bg: 'bg-red-600' },
                 ].map((stat) => (
-                    <div key={stat.label} className="bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 p-6 rounded-[2rem] flex items-center justify-between shadow-sm">
+                    <div key={stat.label} className={cn("border-2 p-6 rounded-[2rem] flex items-center justify-between shadow-lg transition-all hover:scale-105 group", stat.bg, "border-white/10")}>
                         <div>
-                            <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{stat.label}</p>
-                            <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stat.value}</p>
+                            <p className="text-[10px] font-black uppercase text-white/90 tracking-widest">{stat.label}</p>
+                            <p className="text-2xl font-black text-white mt-1">{stat.value}</p>
                         </div>
-                        <stat.icon className={cn("w-6 h-6 opacity-30", stat.color)} />
+                        <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <stat.icon className={cn("w-6 h-6", stat.color)} />
+                        </div>
                     </div>
                 ))}
             </div>
@@ -181,7 +183,7 @@ const AdminOrdersPage: React.FC = () => {
                                     <td className="px-10 py-6 text-right">
                                         <div className={cn(
                                             "inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border",
-                                            order.status === 'success' ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :
+                                            order.status === 'success' ? "bg-blue-500/10 text-blue-600 border-blue-500/20" :
                                                 order.status === 'processing' ? "bg-amber-500/10 text-amber-600 border-amber-500/20" :
                                                     "bg-red-500/10 text-red-600 border-red-500/20"
                                         )}>

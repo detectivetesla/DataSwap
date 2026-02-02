@@ -109,7 +109,7 @@ const Deposits: React.FC = () => {
                                         <div className="flex items-center gap-3">
                                             <div className={cn(
                                                 "w-10 h-10 rounded-xl flex items-center justify-center",
-                                                item.status === 'success' ? "bg-emerald-500/10 text-emerald-600" :
+                                                item.status === 'success' ? "bg-blue-500/10 text-blue-600" :
                                                     item.status === 'processing' ? "bg-yellow-500/10 text-yellow-600" :
                                                         "bg-red-500/10 text-red-600"
                                             )}>
@@ -124,10 +124,10 @@ const Deposits: React.FC = () => {
                                     <td className="px-6 py-5 font-mono text-sm text-slate-400 dark:text-slate-600 uppercase">{item.reference || 'N/A'}</td>
                                     <td className="px-6 py-5">
                                         <span className={cn(
-                                            "px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider border",
-                                            item.status === 'success' ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :
-                                                item.status === 'processing' ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" :
-                                                    "bg-red-500/10 text-red-600 border-red-500/20"
+                                            "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
+                                            item.status === 'success' ? "bg-blue-500/10 text-blue-600 border-blue-500/10" :
+                                                item.status === 'processing' ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/10" :
+                                                    "bg-red-500/10 text-red-600 border-red-500/10"
                                         )}>
                                             {item.status}
                                         </span>

@@ -12,7 +12,7 @@ const Notifications: React.FC = () => {
                     <p className="text-slate-500 font-bold mt-1">Stay updated with your account activity.</p>
                 </div>
                 <button className="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 font-bold text-sm hover:bg-slate-50 transition-all text-slate-600 dark:text-slate-400">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                    <CheckCircle2 className="w-4 h-4 text-blue-500" />
                     <span>Mark all as read</span>
                 </button>
             </div>

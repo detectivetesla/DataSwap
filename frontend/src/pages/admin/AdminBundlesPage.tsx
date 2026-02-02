@@ -98,7 +98,7 @@ const AdminBundlesPage: React.FC = () => {
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                     <button className="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 font-bold text-sm hover:bg-slate-50 transition-all">
-                        <Activity className="w-4 h-4 text-emerald-500" />
+                        <Activity className="w-4 h-4 text-blue-500" />
                         <span>{bundles.filter(b => b.is_active).length} Active Bundles</span>
                     </button>
                     <button
@@ -190,7 +190,7 @@ const AdminBundlesPage: React.FC = () => {
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{bundle.network}</span>
                                 {bundle.is_active ?
-                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> :
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-blue-500" /> :
                                     <XCircle className="w-3.5 h-3.5 text-red-500" />
                                 }
                             </div>
@@ -215,7 +215,7 @@ const AdminBundlesPage: React.FC = () => {
                                         "w-10 h-10 rounded-xl border flex items-center justify-center transition-all duration-300",
                                         bundle.is_active
                                             ? "border-red-500/10 text-red-500 hover:bg-red-500 hover:text-white"
-                                            : "border-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white"
+                                            : "border-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white"
                                     )}
                                 >
                                     <Power className="w-4 h-4" />
@@ -250,7 +250,7 @@ const AdminBundlesPage: React.FC = () => {
                                     <select
                                         name="network"
                                         defaultValue={editingBundle?.network || 'MTN'}
-                                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-transparent focus:border-emerald-500/50 outline-none transition-all font-bold appearance-none"
+                                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-transparent focus:border-blue-500/50 outline-none transition-all font-bold appearance-none"
                                     >
                                         <option value="MTN">MTN Network</option>
                                         <option value="Telecel">Telecel Ghana</option>
@@ -297,10 +297,10 @@ const AdminBundlesPage: React.FC = () => {
 
                             <button
                                 type="submit"
-                                className="w-full py-5 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-black/20 hover:translate-y-[-2px] transition-all flex items-center justify-center gap-3"
+                                className="px-10 py-5 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-black/20 hover:translate-y-[-2px] transition-all flex items-center gap-3"
                             >
                                 <Save className="w-5 h-5" />
-                                <span>{editingBundle ? 'Commit Specifications' : 'Initialize Package'}</span>
+                                <span>{editingBundle ? 'Update Protocol' : 'Deploy Bundle'}</span>
                             </button>
                         </form>
                     </div>

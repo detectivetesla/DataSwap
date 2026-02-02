@@ -118,7 +118,7 @@ const Orders: React.FC = () => {
                                     <td className="px-6 py-5">
                                         <span className={cn(
                                             "px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider border",
-                                            item.status === 'success' ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :
+                                            item.status === 'success' ? "bg-blue-500/10 text-blue-600 border-blue-500/20" :
                                                 item.status === 'processing' ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" :
                                                     "bg-red-500/10 text-red-600 border-red-500/20"
                                         )}>

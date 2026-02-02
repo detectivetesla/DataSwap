@@ -70,7 +70,7 @@ const Wallet: React.FC = () => {
                         </div>
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 mb-2">
-                                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
                                 <p className="text-slate-400 dark:text-slate-500 font-bold text-xs uppercase tracking-widest">Live Balance</p>
                             </div>
                             <h2 className="text-7xl font-black text-white mt-1 tracking-tight drop-shadow-md">
@@ -174,7 +174,7 @@ const Wallet: React.FC = () => {
                                     <div className="flex items-center gap-4">
                                         <div className={cn(
                                             "w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform",
-                                            item.type === 'credit' ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"
+                                            item.type === 'credit' ? "bg-blue-500/10 text-blue-500" : "bg-red-500/10 text-red-500"
                                         )}>
                                             {item.type === 'credit' ? <ArrowDownLeft className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
                                         </div>
@@ -188,7 +188,7 @@ const Wallet: React.FC = () => {
                                     <div className="flex flex-col items-end gap-1">
                                         <span className={cn(
                                             "px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border",
-                                            item.status === 'success' ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :
+                                            item.status === 'success' ? "bg-blue-500/10 text-blue-600 border-blue-500/20" :
                                                 item.status === 'processing' ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" :
                                                     "bg-red-500/10 text-red-600 border-red-500/20"
                                         )}>

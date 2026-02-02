@@ -283,7 +283,7 @@ const DataBundles: React.FC = () => {
                                 <p className="text-base text-slate-500 font-bold">Purchase {selectedNetwork} data bundles for single or multiple recipients</p>
                             </div>
                         </div>
-                        <div className="px-8 py-3.5 rounded-full bg-emerald-500 text-white font-black text-sm shadow-xl shadow-emerald-500/20 w-fit">
+                        <div className="px-8 py-3.5 rounded-full bg-blue-500 text-white font-black text-sm shadow-xl shadow-blue-500/20 w-fit">
                             Wallet: GH₵ {user?.walletBalance?.toFixed(2) || '0.00'}
                         </div>
                     </div>
@@ -311,7 +311,7 @@ const DataBundles: React.FC = () => {
                                         <p className="text-sm text-slate-500 font-bold max-w-[250px] leading-relaxed">The UP2U data bundle from the {selectedNetwork} Group Share pool.</p>
                                         <div className="flex items-center gap-5 pt-4">
                                             <span className="flex items-center gap-2 text-[10px] font-black text-slate-400"><Calendar className="w-3.5 h-3.5 stroke-[3px]" /> 30-90 Days</span>
-                                            <span className="flex items-center gap-2 text-[10px] font-black text-slate-400"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 stroke-[3px]" /> Active</span>
+                                            <span className="flex items-center gap-2 text-[10px] font-black text-slate-400"><CheckCircle2 className="w-3.5 h-3.5 text-blue-500 stroke-[3px]" /> Active</span>
                                             <span className="flex items-center gap-2 text-[10px] font-black text-slate-400"><List className="w-3.5 h-3.5 stroke-[3px]" /> {bundles.length} Packages</span>
                                         </div>
                                     </div>
@@ -491,7 +491,7 @@ const DataBundles: React.FC = () => {
                                 </div>
                                 <div className="flex flex-col items-end">
                                     <div className="flex flex-col items-end leading-none">
-                                        <div className="px-2 py-0.5 rounded-sm bg-emerald-500/20 text-emerald-500 text-[8px] font-black tracking-tighter mb-1">
+                                        <div className="px-2 py-0.5 rounded-sm bg-blue-500/20 text-blue-500 text-[8px] font-black tracking-tighter mb-1">
                                             AGENT PRICE
                                         </div>
                                         <div className="text-white/40 text-[8px] font-black mr-1">PRICE</div>
@@ -644,7 +644,7 @@ const DataBundles: React.FC = () => {
                 {message && (
                     <div className={cn(
                         "max-w-xl mx-auto mb-8 p-6 rounded-3xl border-2 flex items-center gap-4 animate-in zoom-in slide-in-from-top-4 duration-500",
-                        message.type === 'success' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600" : "bg-red-500/10 border-red-500/20 text-red-600"
+                        message.type === 'success' ? "bg-blue-500/10 border-blue-500/20 text-blue-600" : "bg-red-500/10 border-red-500/20 text-red-600"
                     )}>
                         {message.type === 'success' ? <CheckCircle2 className="w-8 h-8 shrink-0" /> : <XCircle className="w-8 h-8 shrink-0" />}
                         <p className="font-black tracking-tight">{message.text}</p>

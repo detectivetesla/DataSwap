@@ -112,8 +112,8 @@ const BundleModal: React.FC<BundleModalProps> = ({ network, isOpen, onClose }) =
 
                     {step === 'success' && (
                         <div className="py-8 text-center space-y-6 animate-in zoom-in-95 duration-300">
-                            <div className="w-20 h-20 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto">
-                                <CheckCircle2 className="w-12 h-12 text-emerald-500" />
+                            <div className="w-20 h-20 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto">
+                                <CheckCircle2 className="w-12 h-12 text-blue-500" />
                             </div>
                             <div>
                                 <h3 className="text-2xl font-bold">Purchase Successful!</h3>

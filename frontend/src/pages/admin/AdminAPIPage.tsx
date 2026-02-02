@@ -56,7 +56,7 @@ const AdminAPIPage: React.FC = () => {
                                 <div className="relative z-10">
                                     <div className="flex items-center justify-between mb-4">
                                         <span className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em]">Live Secret Key</span>
-                                        <span className="text-[10px] font-black text-emerald-500 px-2 py-0.5 rounded bg-emerald-500/10 uppercase border border-emerald-500/20">Authorized</span>
+                                        <span className="text-[10px] font-black text-blue-500 px-2 py-0.5 rounded bg-blue-500/10 uppercase border border-blue-500/20">Authorized</span>
                                     </div>
                                     <div className="flex items-center gap-4">
                                         <code className="flex-1 bg-white/5 rounded-xl px-6 py-4 font-mono text-sm text-amber-100 border border-white/10 break-all">
@@ -94,7 +94,7 @@ const AdminAPIPage: React.FC = () => {
                             </div>
                             <div className="p-6 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 space-y-2">
                                 <div className="flex items-center gap-2">
-                                    <Lock className="w-4 h-4 text-emerald-500" />
+                                    <Lock className="w-4 h-4 text-blue-500" />
                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Auth Method</span>
                                 </div>
                                 <p className="font-bold text-slate-900 dark:text-white text-sm">Bearer Token Strategy</p>
@@ -115,7 +115,7 @@ const AdminAPIPage: React.FC = () => {
                                     <div className="flex items-center gap-4">
                                         <span className={cn(
                                             "px-3 py-1 rounded-lg text-[10px] font-black border",
-                                            ep.method === 'GET' ? "bg-blue-500/10 text-blue-500 border-blue-500/20" : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                                            ep.method === 'GET' ? "bg-blue-500/10 text-blue-500 border-blue-500/20" : "bg-blue-500/10 text-blue-500 border-blue-500/20"
                                         )}>
                                             {ep.method}
                                         </span>
@@ -127,7 +127,7 @@ const AdminAPIPage: React.FC = () => {
                                     <div className="flex items-center gap-3">
                                         <div className={cn(
                                             "w-2 h-2 rounded-full",
-                                            ep.status === 'optimal' ? "bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)]" : "bg-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.5)]"
+                                            ep.status === 'optimal' ? "bg-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.5)]" : "bg-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.5)]"
                                         )} />
                                         <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider font-mono">{ep.status}</span>
                                     </div>
@@ -170,10 +170,10 @@ const AdminAPIPage: React.FC = () => {
                             <div className="space-y-2">
                                 <div className="flex justify-between text-xs font-black uppercase tracking-widest">
                                     <span className="text-slate-500">Webhook Success</span>
-                                    <span className="text-emerald-500">99.2%</span>
+                                    <span className="text-blue-500">99.2%</span>
                                 </div>
                                 <div className="h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
-                                    <div className="h-full bg-emerald-500 w-[99%] rounded-full shadow-[0_0_12px_rgba(16,185,129,0.5)]" />
+                                    <div className="h-full bg-blue-500 w-[99%] rounded-full shadow-[0_0_12px_rgba(59,130,246,0.5)]" />
                                 </div>
                             </div>
                         </div>

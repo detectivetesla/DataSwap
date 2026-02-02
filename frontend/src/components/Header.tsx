@@ -134,8 +134,8 @@ const Header: React.FC<HeaderProps> = ({
                             </div>
                             <div className="space-y-1 mb-4">
                                 <div className="flex items-start gap-3 p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-2xl transition-colors cursor-pointer group">
-                                    <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
-                                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                    <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                                        <CheckCircle2 className="w-4 h-4 text-blue-500" />
                                     </div>
                                     <div>
                                         <p className="text-xs font-black text-slate-900 dark:text-white">Order Delivered</p>

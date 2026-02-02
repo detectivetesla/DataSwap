@@ -45,10 +45,10 @@ const AdminPage: React.FC = () => {
     }, []);
 
     const stats = [
-        { label: 'TOTAL USERS', value: statsData.totalUsers.toString(), icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/20', border: 'border-blue-500/30', path: '/admin/users' },
-        { label: "TODAY'S ORDERS", value: statsData.todayOrders.toString(), icon: Database, color: 'text-orange-500', bg: 'bg-orange-500/20', border: 'border-orange-500/30', path: '/admin/orders' },
-        { label: "TODAY'S REVENUE", value: `GH₵ ${statsData.todayRevenue.toLocaleString()}`, icon: BarChart3, color: 'text-blue-500', bg: 'bg-blue-500/20', border: 'border-blue-500/30', path: '/admin/analytics' },
-        { label: 'LIFETIME REVENUE', value: `GH₵ ${statsData.lifetimeRevenue.toLocaleString()}`, icon: TrendingUp, color: 'text-emerald-500', bg: 'bg-emerald-500/20', border: 'border-emerald-500/30', isPrimary: true, path: '/admin/analytics' },
+        { label: 'TOTAL USERS', value: statsData.totalUsers.toString(), icon: Users, color: 'text-purple-600', bg: 'bg-purple-600', border: 'border-purple-400/50', path: '/admin/users' },
+        { label: "TODAY'S ORDERS", value: statsData.todayOrders.toString(), icon: Database, color: 'text-emerald-600', bg: 'bg-emerald-600', border: 'border-emerald-400/50', path: '/admin/orders' },
+        { label: "TODAY'S REVENUE", value: `GH₵ ${statsData.todayRevenue.toLocaleString()}`, icon: BarChart3, color: 'text-amber-600', bg: 'bg-amber-500', border: 'border-amber-300/50', path: '/admin/analytics' },
+        { label: 'LIFETIME REVENUE', value: `GH₵ ${statsData.lifetimeRevenue.toLocaleString()}`, icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-600', border: 'border-blue-400/50', isPrimary: true, path: '/admin/analytics' },
     ];
 
     return (
@@ -121,12 +121,12 @@ const AdminPage: React.FC = () => {
                             </div>
                         ) : (
                             <div className="flex items-center gap-4 relative z-10">
-                                <div className={cn("p-3 rounded-xl bg-white/30 border border-white/20 shadow-inner group-hover:scale-110 transition-transform")}>
-                                    <stat.icon className={cn("w-5 h-5 text-white")} />
+                                <div className={cn("p-3 rounded-xl bg-white border border-white/20 shadow-lg group-hover:scale-110 transition-transform flex items-center justify-center")}>
+                                    <stat.icon className={cn("w-5 h-5", stat.color)} />
                                 </div>
                                 <div className="flex flex-col">
                                     <h3 className="text-2xl font-black text-white">{stat.value}</h3>
-                                    <p className="text-[10px] font-black text-white/80 uppercase tracking-widest leading-none mt-1">{stat.label}</p>
+                                    <p className="text-[10px] font-black text-white/90 uppercase tracking-widest leading-none mt-1">{stat.label}</p>
                                 </div>
                             </div>
                         )}
@@ -181,7 +181,7 @@ const AdminPage: React.FC = () => {
                                         <td className="py-4">
                                             <span className={cn(
                                                 "px-3 py-1.5 rounded-full text-[10px] font-black",
-                                                order.status === 'success' ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-600"
+                                                order.status === 'success' ? "bg-blue-500/10 text-blue-500" : "bg-red-500/10 text-red-600"
                                             )}>
                                                 {order.status}
                                             </span>

@@ -114,7 +114,7 @@ const AdminUsersPage: React.FC = () => {
                     </button>
                     <button
                         onClick={() => { setEditingUser(null); setIsModalOpen(true); }}
-                        className="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-primary text-white font-black text-sm shadow-xl shadow-primary/20 hover:translate-y-[-2px] transition-all"
+                        className="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-blue-500 text-white font-black text-sm shadow-xl shadow-blue-500/20 hover:translate-y-[-2px] transition-all"
                     >
                         <Plus className="w-5 h-5" />
                         <span>Add New User</span>
@@ -203,8 +203,8 @@ const AdminUsersPage: React.FC = () => {
                                     </td>
                                     <td className="px-8 py-6">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                                                <Wallet className="w-4 h-4 text-emerald-500" />
+                                            <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                                                <Wallet className="w-4 h-4 text-blue-500" />
                                             </div>
                                             <span className="font-black text-slate-900 dark:text-white text-lg">₵{Number(user.wallet_balance).toFixed(2)}</span>
                                         </div>
@@ -212,7 +212,7 @@ const AdminUsersPage: React.FC = () => {
                                     <td className="px-8 py-6">
                                         <div className={cn(
                                             "flex items-center gap-2 font-black text-[10px] uppercase tracking-wider",
-                                            user.status === 'suspended' ? "text-red-500" : "text-emerald-500"
+                                            user.status === 'suspended' ? "text-red-500" : "text-blue-500"
                                         )}>
                                             {user.status === 'suspended' ? <XCircle className="w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
                                             <span>{user.status}</span>
@@ -232,7 +232,7 @@ const AdminUsersPage: React.FC = () => {
                                                 className={cn(
                                                     "w-10 h-10 rounded-xl border flex items-center justify-center transition-all",
                                                     user.is_blocked
-                                                        ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500 hover:bg-emerald-500 hover:text-white"
+                                                        ? "bg-blue-500/10 border-blue-500/20 text-blue-500 hover:bg-blue-500 hover:text-white"
                                                         : "bg-amber-500/10 border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-white"
                                                 )}
                                                 title={user.is_blocked ? "Unblock User" : "Block User"}

@@ -117,7 +117,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ type, onToggle }) => {
                 <div className="w-full bg-[#1F2937]/90 backdrop-blur-3xl rounded-3xl sm:rounded-[2rem] p-6 sm:p-10 md:p-12 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.8)] border border-white/5 relative overflow-hidden animate-in fade-in zoom-in-95 duration-700">
 
                     {successMsg && (
-                        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[90%] bg-emerald-500/10 border border-emerald-500/20 py-2 sm:py-3 rounded-xl text-center text-xs font-bold text-emerald-400 px-4 animate-in slide-in-from-top-2">
+                        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[90%] bg-blue-500/10 border border-blue-500/20 py-2 sm:py-3 rounded-xl text-center text-xs font-bold text-blue-400 px-4 animate-in slide-in-from-top-2">
                             {successMsg}
                         </div>
                     )}

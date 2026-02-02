@@ -85,8 +85,8 @@ const LandingPage: React.FC = () => {
                     <p className="text-slate-400">Powered by Paystack. Your transactions are safe and encrypted.</p>
                 </div>
                 <div className="space-y-4">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                        <Database className="text-emerald-500" />
+                    <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                        <Database className="text-blue-500" />
                     </div>
                     <h3 className="text-xl font-bold">Reliable Delivery</h3>
                     <p className="text-slate-400">Data reflects on your phone within seconds of purchase.</p>

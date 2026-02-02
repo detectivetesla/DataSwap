@@ -30,7 +30,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onClose, isCollapsed }) =>
     const { theme, toggleTheme } = useTheme();
 
     const menuItems: { icon: any, label: string, path: string, color: string, bgColor: string, badge?: string, end?: boolean }[] = [
-        { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', end: true, color: 'text-emerald-600 dark:text-emerald-500', bgColor: 'bg-emerald-500/20' },
+        { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', end: true, color: 'text-blue-600 dark:text-blue-500', bgColor: 'bg-blue-500/20' },
         { icon: Wallet, label: 'Wallet', path: '/dashboard/wallet', color: 'text-orange-600 dark:text-orange-500', bgColor: 'bg-orange-500/20' },
         { icon: Download, label: 'Deposits', path: '/dashboard/deposits', color: 'text-blue-600 dark:text-blue-500', bgColor: 'bg-blue-500/20' },
         { icon: Database, label: 'Data Bundles', path: '/dashboard/data-bundles', color: 'text-primary', bgColor: 'bg-primary/20' },

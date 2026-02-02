@@ -10,7 +10,8 @@
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
     --border: 214 32% 88%;
-    --primary: 142 71% 45%;
+    --primary: 221 83% 53%;
+    /* Blue-500 (approx hsl) */
     --primary-foreground: 0 0% 100%;
     --sidebar: 0 0% 100%;
     --sidebar-border: 214 32% 88%;
@@ -25,7 +26,8 @@
     --card: 222 39% 11%;
     --card-foreground: 210 40% 98%;
     --border: 222 39% 18%;
-    --primary: 160 100% 40%;
+    --primary: 217 91% 60%;
+    /* Lighter blue for dark mode */
     --primary-foreground: 0 0% 100%;
     --sidebar: 222 47% 9%;
     --sidebar-border: 222 39% 15%;
