@@ -3,8 +3,7 @@ import {
     Activity, Search, Filter, Download,
     Trash2, AlertCircle, CheckCircle2,
     Info, Clock, User, Shield, Terminal,
-    Database, Zap, ArrowRight, ExternalLink,
-    ShoppingBag
+    Database, Zap, ArrowRight, ExternalLink, ShoppingBag
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import api from '@/utils/api';
