@@ -158,78 +158,108 @@ const AdminBundlesPage: React.FC = () => {
                         <Database className="w-16 h-16" />
                         <p className="text-xl font-black font-mono">STOCK_EMPTY</p>
                     </div>
-                ) : filteredBundles.map((bundle) => (
-                    <div key={bundle.id} className={cn(
-                        "bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-[2.5rem] p-8 space-y-6 transition-all duration-500 relative group overflow-hidden",
-                        !bundle.is_active && "opacity-60 grayscale-[0.8]"
-                    )}>
-                        <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-10 group-hover:rotate-12 transition-all duration-700">
-                            <Zap className="w-32 h-32" />
-                        </div>
+                ) : filteredBundles.map((bundle) => {
+                    // Network theme colors
+                    const networkStyles = {
+                        MTN: {
+                            bg: 'bg-yellow-50 dark:bg-yellow-500/10',
+                            border: 'border-yellow-200 dark:border-yellow-500/20',
+                            accent: 'text-yellow-600 dark:text-yellow-400'
+                        },
+                        Telecel: {
+                            bg: 'bg-red-50 dark:bg-red-500/10',
+                            border: 'border-red-200 dark:border-red-500/20',
+                            accent: 'text-red-600 dark:text-red-400'
+                        },
+                        AirtelTigo: {
+                            bg: 'bg-blue-50 dark:bg-blue-500/10',
+                            border: 'border-blue-200 dark:border-blue-500/20',
+                            accent: 'text-blue-600 dark:text-blue-400'
+                        },
+                        AT: {
+                            bg: 'bg-blue-50 dark:bg-blue-500/10',
+                            border: 'border-blue-200 dark:border-blue-500/20',
+                            accent: 'text-blue-600 dark:text-blue-400'
+                        }
+                    };
+                    const style = networkStyles[bundle.network as keyof typeof networkStyles] || networkStyles.MTN;
 
-                        <div className="flex items-start justify-between relative z-10">
-                            <div className={cn(
-                                "p-3 rounded-2xl shrink-0 shadow-sm",
-                                bundle.network === 'MTN' ? "bg-yellow-400/10 text-yellow-600 border border-yellow-400/20" :
-                                    bundle.network === 'Telecel' ? "bg-red-500/10 text-red-600 border border-red-500/20" :
-                                        "bg-blue-500/10 text-blue-600 border border-blue-500/20"
-                            )}>
-                                <span className="text-xs font-black uppercase tracking-widest">{bundle.network}</span>
+                    return (
+                        <div key={bundle.id} className={cn(
+                            "rounded-[2.5rem] p-8 space-y-6 transition-all duration-500 relative group overflow-hidden",
+                            style.bg,
+                            style.border,
+                            "border",
+                            !bundle.is_active && "opacity-60 grayscale-[0.8]"
+                        )}>
+                            <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-10 group-hover:rotate-12 transition-all duration-700">
+                                <Zap className="w-32 h-32" />
                             </div>
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => { setEditingBundle(bundle); setIsModalOpen(true); }}
-                                    className="w-11 h-11 rounded-xl bg-slate-50 dark:bg-black/20 border border-slate-100 dark:border-white/5 flex items-center justify-center text-slate-500 hover:text-emerald-500 transition-all hover:scale-110 shadow-sm"
-                                >
-                                    <Edit3 className="w-4 h-4" />
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(bundle.id)}
-                                    className="w-11 h-11 rounded-xl bg-red-500/5 border border-red-500/10 flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all hover:scale-110 shadow-sm shadow-red-500/0 hover:shadow-red-500/20"
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                </button>
-                            </div>
-                        </div>
 
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{bundle.network}</span>
-                                {bundle.is_active ?
-                                    <CheckCircle2 className="w-3.5 h-3.5 text-blue-500" /> :
-                                    <XCircle className="w-3.5 h-3.5 text-red-500" />
-                                }
-                            </div>
-                            <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{bundle.data_amount}</h3>
-                            <p className="text-sm font-bold text-slate-500 mb-6 truncate">{bundle.network} Data Plan</p>
-
-                            <div className="flex items-center justify-between gap-4">
-                                <div className="space-y-1">
-                                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Price</div>
-                                    <div className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">₵{Number(bundle.price_ghc).toFixed(2)}</div>
+                            <div className="flex items-start justify-between relative z-10">
+                                <div className={cn(
+                                    "p-3 rounded-2xl shrink-0 shadow-sm",
+                                    bundle.network === 'MTN' ? "bg-yellow-400/10 text-yellow-600 border border-yellow-400/20" :
+                                        bundle.network === 'Telecel' ? "bg-red-500/10 text-red-600 border border-red-500/20" :
+                                            "bg-blue-500/10 text-blue-600 border border-blue-500/20"
+                                )}>
+                                    <span className="text-xs font-black uppercase tracking-widest">{bundle.network}</span>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => { setEditingBundle(bundle); setIsModalOpen(true); }}
+                                        className="w-11 h-11 rounded-xl bg-slate-50 dark:bg-black/20 border border-slate-100 dark:border-white/5 flex items-center justify-center text-slate-500 hover:text-emerald-500 transition-all hover:scale-110 shadow-sm"
+                                    >
+                                        <Edit3 className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(bundle.id)}
+                                        className="w-11 h-11 rounded-xl bg-red-500/5 border border-red-500/10 flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all hover:scale-110 shadow-sm shadow-red-500/0 hover:shadow-red-500/20"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
                                 </div>
                             </div>
 
-                            <div className="pt-4 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
-                                <div className="flex items-center gap-2 text-slate-500 font-bold text-xs">
-                                    <Globe className="w-3.5 h-3.5" />
-                                    <span>{bundle.validity_days} Days Validity</span>
+                            <div className="relative z-10">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{bundle.network}</span>
+                                    {bundle.is_active ?
+                                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-500" /> :
+                                        <XCircle className="w-3.5 h-3.5 text-red-500" />
+                                    }
                                 </div>
-                                <button
-                                    onClick={() => toggleStatus(bundle.id)}
-                                    className={cn(
-                                        "w-10 h-10 rounded-xl border flex items-center justify-center transition-all duration-300",
-                                        bundle.is_active
-                                            ? "border-red-500/10 text-red-500 hover:bg-red-500 hover:text-white"
-                                            : "border-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white"
-                                    )}
-                                >
-                                    <Power className="w-4 h-4" />
-                                </button>
+                                <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{bundle.data_amount}</h3>
+                                <p className="text-sm font-bold text-slate-500 mb-6 truncate">{bundle.network} Data Plan</p>
+
+                                <div className="flex items-center justify-between gap-4">
+                                    <div className="space-y-1">
+                                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Price</div>
+                                        <div className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">₵{Number(bundle.price_ghc).toFixed(2)}</div>
+                                    </div>
+                                </div>
+
+                                <div className="pt-4 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+                                    <div className="flex items-center gap-2 text-slate-500 font-bold text-xs">
+                                        <Globe className="w-3.5 h-3.5" />
+                                        <span>{bundle.validity_days} Days Validity</span>
+                                    </div>
+                                    <button
+                                        onClick={() => toggleStatus(bundle.id)}
+                                        className={cn(
+                                            "w-10 h-10 rounded-xl border flex items-center justify-center transition-all duration-300",
+                                            bundle.is_active
+                                                ? "border-red-500/10 text-red-500 hover:bg-red-500 hover:text-white"
+                                                : "border-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white"
+                                        )}
+                                    >
+                                        <Power className="w-4 h-4" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {/* Bundle Modal */}
