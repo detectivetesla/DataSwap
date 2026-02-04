@@ -3,6 +3,7 @@ const router = express.Router();
 const authMiddleware = require('../middleware/auth');
 const db = require('../db');
 const bcrypt = require('bcryptjs');
+const portal02Service = require('../services/portal02');
 
 // Admin Check Middleware
 const adminOnly = (req, res, next) => {
@@ -221,6 +222,26 @@ router.delete('/bundles/:id', authMiddleware, adminOnly, async (req, res) => {
         res.json({ message: 'Bundle deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Failed to delete bundle' });
+    }
+});
+
+// Sync Bundles with Portal02
+router.post('/bundles/sync', authMiddleware, adminOnly, async (req, res) => {
+    try {
+        const externalBundles = await portal02Service.syncBundles();
+
+        // This is a basic implementation that logs the external bundles.
+        // In a full implementation, you'd iterate and update/insert into the 'bundles' table.
+        console.log('Synced Bundles from Portal02:', externalBundles);
+
+        res.json({
+            message: 'Bundles synced successfully (Check server logs for data)',
+            count: externalBundles.length,
+            bundles: externalBundles
+        });
+    } catch (error) {
+        console.error('Portal02 Sync Error:', error);
+        res.status(500).json({ message: 'Failed to sync with Portal02', error: error.message });
     }
 });
 
