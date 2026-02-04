@@ -31,12 +31,14 @@ const portal02Service = {
     /**
      * Purchase a data bundle for a recipient
      */
-    purchaseData: async (bundleCode, phoneNumber) => {
+    purchaseData: async (network, volume, phoneNumber, offerSlug) => {
         try {
-            const response = await axios.post(`${PORTAL02_BASE_URL}/buy-data`, {
-                bundle_code: bundleCode,
+            const response = await axios.post(`${PORTAL02_BASE_URL}/order/${network.toLowerCase()}`, {
+                type: 'single',
+                volume: volume,
                 phone: phoneNumber,
-                callback_url: `${process.env.BACKEND_URL}/webhooks/portal02`
+                offerSlug: offerSlug,
+                webhookUrl: `${process.env.BACKEND_URL}/webhooks/portal02`
             }, {
                 headers: { 'Authorization': `Bearer ${PORTAL02_API_KEY}` }
             });
