@@ -163,6 +163,25 @@ CREATE TABLE IF NOT EXISTS settings (
 -- DEFAULT DATA
 -- =============================================================================
 
+-- Ensure is_popular column exists (for existing databases)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'bundles' AND column_name = 'is_popular') THEN
+        ALTER TABLE bundles ADD COLUMN is_popular BOOLEAN DEFAULT FALSE;
+    END IF;
+END $$;
+
+-- Ensure provider_order_id and provider_reference exist in transactions
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'transactions' AND column_name = 'provider_order_id') THEN
+        ALTER TABLE transactions ADD COLUMN provider_order_id TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'transactions' AND column_name = 'provider_reference') THEN
+        ALTER TABLE transactions ADD COLUMN provider_reference TEXT;
+    END IF;
+END $$;
+
 -- Insert default system settings
 INSERT INTO settings (key, value, description) VALUES
     ('maintenance_mode', 'false', 'Disable all non-admin access'),
