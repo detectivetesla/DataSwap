@@ -11,10 +11,10 @@ const portal02Service = {
      */
     syncBundles: async () => {
         try {
-            const response = await axios.get(`${PORTAL02_BASE_URL}/bundles`, {
-                headers: { 'Authorization': `Bearer ${process.env.PORTAL02_API_KEY}` }
+            const response = await axios.get(`${PORTAL02_BASE_URL}/offers`, {
+                headers: { 'Authorization': `Bearer ${PORTAL02_API_KEY}` }
             });
-            return response.data; // Expected: array of bundle objects
+            return response.data.offers; // Extracted based on official documentation
         } catch (error) {
             console.error('Portal02 Sync Error:', error.response?.data || error.message);
             throw error;
