@@ -33,7 +33,7 @@ const DataBundles: React.FC = () => {
     const [currentStep, setCurrentStep] = useState<Step>(1);
     const [selectedNetwork, setSelectedNetwork] = useState<Network | null>(null);
     const [selectedBundle, setSelectedBundle] = useState<Bundle | null>(null);
-    const [mode, setMode] = useState<PurchaseMode>('normal');
+    const [mode, setMode] = useState<PurchaseMode>('grid');
     const [activeTab, setActiveTab] = useState<OrderTab>('single');
     const [recipients, setRecipients] = useState<Recipient[]>([{ phone: '', bundleId: '' }]);
     const [isRecurring, setIsRecurring] = useState(false);
