@@ -22,7 +22,7 @@ const Dashboard: React.FC = () => {
 
             {/* Mobile Sidebar Overlay */}
             <div className={cn(
-                "fixed inset-0 z-50 lg:hidden transition-opacity duration-300",
+                "fixed inset-0 z-[100] lg:hidden transition-opacity duration-300",
                 isSidebarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
             )}>
                 <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsSidebarOpen(false)} />

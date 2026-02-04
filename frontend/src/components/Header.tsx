@@ -38,7 +38,7 @@ const Header: React.FC<HeaderProps> = ({
     }, []);
 
     return (
-        <header className="w-full flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-4 py-2 sm:py-4 px-1 sm:px-2 mb-4 md:mb-6 relative z-50">
+        <header className="w-full flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-4 py-2 sm:py-4 px-1 sm:px-2 mb-4 md:mb-6 relative z-40">
             {/* Left Section: Toggles & Search */}
             <div className="flex items-center gap-4 flex-1">
                 <div className="flex items-center gap-2">
