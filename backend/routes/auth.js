@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const db = require('../db');
 const authMiddleware = require('../middleware/auth');
 const { logActivity } = require('../services/logger');
+const notificationService = require('../services/notificationService');
 
 // Ensure JWT_SECRET is available
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key';
@@ -59,6 +60,20 @@ router.post('/register', async (req, res) => {
             action: 'User Registration',
             message: `New user registered: ${email}`,
             req
+        });
+
+        await notificationService.createMessage({
+            userId: result.rows[0].id,
+            title: 'Welcome to DataSwap!',
+            content: 'We are thrilled to have you here. You can now start buying data at the best rates in Ghana. If you have any questions, feel free to contact support.',
+            sender: 'System Admin'
+        });
+
+        await notificationService.createNotification({
+            userId: result.rows[0].id,
+            title: 'Account Created',
+            message: 'Your account has been successfully created. Welcome aboard!',
+            type: 'success'
         });
     } catch (error) {
         res.status(500).json({ message: 'Registration failed', error: error.message });

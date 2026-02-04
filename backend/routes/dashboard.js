@@ -6,6 +6,7 @@ const paystackService = require('../services/paystack');
 const portal02Service = require('../services/portal02');
 const CONFIG = require('../config/constants');
 const { logActivity } = require('../services/logger');
+const notificationService = require('../services/notificationService');
 
 // Initialize Deposit
 router.post('/deposit', authMiddleware, async (req, res) => {
@@ -278,6 +279,13 @@ router.post('/purchase', authMiddleware, async (req, res) => {
                 action: 'Purchase Initiated',
                 message: `User ${userId} initiated ${bundle.network} ${bundle.data_amount} purchase for ${phoneNumber}`,
                 req
+            });
+
+            await notificationService.createNotification({
+                userId,
+                title: 'Order Placed',
+                message: `Your order for ${bundle.network} ${bundle.data_amount} has been placed. Reference: ${reference}`,
+                type: 'info'
             });
         } catch (portalError) {
             console.error('External Provider Error:', portalError.message);

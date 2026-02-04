@@ -19,6 +19,8 @@ const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const dashboardRoutes = require('./routes/dashboard');
 const webhookRoutes = require('./routes/webhooks');
+const notificationRoutes = require('./routes/notifications');
+const messageRoutes = require('./routes/messages');
 
 // Health Check
 app.get('/health', (req, res) => {
@@ -31,6 +33,8 @@ apiRouter.use('/auth', authRoutes);
 apiRouter.use('/admin', adminRoutes);
 apiRouter.use('/dashboard', dashboardRoutes);
 apiRouter.use('/webhooks', webhookRoutes);
+apiRouter.use('/notifications', notificationRoutes);
+apiRouter.use('/messages', messageRoutes);
 
 // Support both /api prefix and direct access
 app.use('/api', apiRouter);

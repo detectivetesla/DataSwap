@@ -3,6 +3,7 @@ const router = express.Router();
 const crypto = require('crypto');
 const db = require('../db');
 const { logActivity } = require('../services/logger');
+const notificationService = require('../services/notificationService');
 
 // Middleware to verify Paystack signature
 const verifyPaystackSignature = (req, res, next) => {
@@ -66,6 +67,13 @@ router.post('/paystack', verifyPaystackSignature, async (req, res) => {
                             action: 'Payment Success',
                             message: `Payment confirmed for transaction: ${reference}. Wallet credited with ${requestedAmount}`
                         });
+
+                        await notificationService.createNotification({
+                            userId,
+                            title: 'Wallet Funded',
+                            message: `Successfully credited ${requestedAmount} GHC to your wallet.`,
+                            type: 'success'
+                        });
                     } catch (e) {
                         await client.query('ROLLBACK');
                         throw e;
@@ -109,6 +117,21 @@ router.post('/portal02', async (req, res) => {
                 action: 'Order Status Update',
                 message: `Portal02 Order ${reference} updated to ${status} (${localStatus})`
             });
+
+            // Fetch user_id for this transaction to send notification
+            const txInfo = await db.query('SELECT user_id, amount, metadata FROM transactions WHERE reference = $1 OR reference = $2', [reference, orderId]);
+            if (txInfo.rows.length > 0) {
+                const userId = txInfo.rows[0].user_id;
+                const metadata = txInfo.rows[0].metadata || {};
+                await notificationService.createNotification({
+                    userId,
+                    title: localStatus === 'success' ? 'Order Successful' : (localStatus === 'failed' ? 'Order Failed' : 'Order Update'),
+                    message: localStatus === 'success'
+                        ? `Your order for ${metadata.bundle_name || 'data'} has been completed successfully.`
+                        : (localStatus === 'failed' ? `Your order for ${metadata.bundle_name || 'data'} failed. Please contact support.` : `Your order status is now ${status}.`),
+                    type: localStatus === 'success' ? 'success' : (localStatus === 'failed' ? 'error' : 'info')
+                });
+            }
 
             // TODO: If failed/refunded, initiate a manual or automatic refund to wallet balance
             if (localStatus === 'failed') {

@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Search, Bell, Settings, Mail, User, Command, PanelLeft, Menu, X, ArrowRight, CheckCircle2, Info } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/utils/cn';
+import api from '@/utils/api';
+import { supabase } from '@/utils/supabase';
 
 interface HeaderProps {
     isCollapsed: boolean;
@@ -21,8 +23,55 @@ const Header: React.FC<HeaderProps> = ({
     const navigate = useNavigate();
     const [showMessages, setShowMessages] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
+    const [unreadMessages, setUnreadMessages] = useState(0);
+    const [unreadNotifications, setUnreadNotifications] = useState(0);
+    const [recentMessages, setRecentMessages] = useState<any[]>([]);
+    const [recentNotifications, setRecentNotifications] = useState<any[]>([]);
     const messagesRef = useRef<HTMLDivElement>(null);
     const notificationsRef = useRef<HTMLDivElement>(null);
+
+    const fetchCounts = async () => {
+        if (!user) return;
+        try {
+            const [msgCount, notifCount, msgs, notifs] = await Promise.all([
+                api.get('/messages/unread-count'),
+                api.get('/notifications/unread-count'),
+                api.get('/messages'),
+                api.get('/notifications')
+            ]);
+            setUnreadMessages(msgCount.data.count);
+            setUnreadNotifications(notifCount.data.count);
+            setRecentMessages(msgs.data.messages.slice(0, 3));
+            setRecentNotifications(notifs.data.notifications.slice(0, 3));
+        } catch (error) {
+            console.error('Failed to fetch header counts:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchCounts();
+
+        // Real-time via Supabase
+        let msgChannel: any = null;
+        let notifChannel: any = null;
+
+        if (supabase && user) {
+            msgChannel = supabase
+                .channel('user-messages')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'messages', filter: `user_id=eq.${user.id}` }, () => fetchCounts())
+                .subscribe();
+
+            notifChannel = supabase
+                .channel('user-notifications')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, () => fetchCounts())
+                .subscribe();
+        }
+
+        return () => {
+            if (msgChannel) supabase?.removeChannel(msgChannel);
+            if (notifChannel) supabase?.removeChannel(notifChannel);
+        };
+    }, [user?.id]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -85,23 +134,27 @@ const Header: React.FC<HeaderProps> = ({
                         title="Messages"
                     >
                         <Mail className="w-4 h-4 sm:w-5 h-5 group-hover:scale-110 transition-transform" />
-                        {!showMessages && <span className="absolute top-2 sm:top-2.5 right-2 sm:right-2.5 w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-indigo-600 border-2 border-white dark:border-[#0B0F19]" />}
+                        {unreadMessages > 0 && <span className="absolute top-2 sm:top-2.5 right-2 sm:right-2.5 w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-indigo-600 border-2 border-white dark:border-[#0B0F19]" />}
                     </button>
 
                     {showMessages && (
-                        <div className="absolute right-0 mt-3 w-80 bg-white dark:bg-[#0B0F19] border border-slate-100 dark:border-white/10 rounded-[2rem] shadow-2xl p-4 animate-in zoom-in-95 duration-200">
+                        <div className="fixed sm:absolute right-4 sm:right-0 left-4 sm:left-auto mt-3 w-auto sm:w-80 bg-white dark:bg-[#0B0F19] border border-slate-100 dark:border-white/10 rounded-[2rem] shadow-2xl p-4 animate-in zoom-in-95 duration-200 z-50">
                             <div className="flex items-center justify-between mb-4 px-2">
                                 <h4 className="font-black text-slate-900 dark:text-white tracking-tight">Messages</h4>
-                                <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest bg-indigo-50 dark:bg-indigo-500/10 px-2 py-1 rounded-lg">New</span>
+                                {unreadMessages > 0 && <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest bg-indigo-50 dark:bg-indigo-500/10 px-2 py-1 rounded-lg">{unreadMessages} New</span>}
                             </div>
-                            <div className="space-y-1 mb-4">
-                                <div className="p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-2xl transition-colors cursor-pointer group">
-                                    <p className="text-xs font-black text-slate-900 dark:text-white mb-1">System Update</p>
-                                    <p className="text-[10px] font-bold text-slate-500 line-clamp-1">New bundles added for MTN and AT Network...</p>
-                                </div>
+                            <div className="space-y-1 mb-4 max-h-60 overflow-y-auto custom-scrollbar">
+                                {recentMessages.length === 0 ? (
+                                    <p className="p-4 text-[10px] text-center text-slate-400 font-bold uppercase">No messages yet</p>
+                                ) : recentMessages.map((msg) => (
+                                    <div key={msg.id} className="p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-2xl transition-colors cursor-pointer group">
+                                        <p className={cn("text-xs font-black mb-1", msg.is_read ? "text-slate-500" : "text-slate-900 dark:text-white")}>{msg.title}</p>
+                                        <p className="text-[10px] font-bold text-slate-500 line-clamp-1">{msg.content}</p>
+                                    </div>
+                                ))}
                             </div>
                             <Link
-                                to="/dashboard/inbox"
+                                to="/dashboard/inboxes"
                                 onClick={() => setShowMessages(false)}
                                 className="flex items-center justify-center gap-2 py-3 w-full rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all"
                             >
@@ -123,25 +176,34 @@ const Header: React.FC<HeaderProps> = ({
                         title="Notifications"
                     >
                         <Bell className="w-4 h-4 sm:w-5 h-5 group-hover:scale-110 transition-transform" />
-                        {!showNotifications && <span className="absolute top-2 sm:top-2.5 right-2 sm:right-2.5 w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-red-600 border-2 border-white dark:border-[#0B0F19]" />}
+                        {unreadNotifications > 0 && <span className="absolute top-2 sm:top-2.5 right-2 sm:right-2.5 w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-red-600 border-2 border-white dark:border-[#0B0F19]" />}
                     </button>
 
                     {showNotifications && (
-                        <div className="absolute right-0 mt-3 w-80 bg-white dark:bg-[#0B0F19] border border-slate-100 dark:border-white/10 rounded-[2rem] shadow-2xl p-4 animate-in zoom-in-95 duration-200">
+                        <div className="fixed sm:absolute right-4 sm:right-0 left-4 sm:left-auto mt-3 w-auto sm:w-80 bg-white dark:bg-[#0B0F19] border border-slate-100 dark:border-white/10 rounded-[2rem] shadow-2xl p-4 animate-in zoom-in-95 duration-200 z-50">
                             <div className="flex items-center justify-between mb-4 px-2">
                                 <h4 className="font-black text-slate-900 dark:text-white tracking-tight">Notifications</h4>
                                 <Link to="/dashboard/notifications" onClick={() => setShowNotifications(false)} className="text-[10px] font-black text-orange-500 uppercase tracking-widest hover:underline">Mark Read</Link>
                             </div>
-                            <div className="space-y-1 mb-4">
-                                <div className="flex items-start gap-3 p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-2xl transition-colors cursor-pointer group">
-                                    <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
-                                        <CheckCircle2 className="w-4 h-4 text-blue-500" />
+                            <div className="space-y-1 mb-4 max-h-60 overflow-y-auto custom-scrollbar">
+                                {recentNotifications.length === 0 ? (
+                                    <p className="p-4 text-[10px] text-center text-slate-400 font-bold uppercase">All caught up!</p>
+                                ) : recentNotifications.map((notif) => (
+                                    <div key={notif.id} className="flex items-start gap-3 p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-2xl transition-colors cursor-pointer group">
+                                        <div className={cn(
+                                            "w-8 h-8 rounded-xl flex items-center justify-center shrink-0",
+                                            notif.type === 'success' ? "bg-emerald-500/10 text-emerald-500" :
+                                                notif.type === 'error' ? "bg-red-500/10 text-red-500" :
+                                                    "bg-blue-500/10 text-blue-500"
+                                        )}>
+                                            {notif.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <Info className="w-4 h-4" />}
+                                        </div>
+                                        <div>
+                                            <p className={cn("text-xs font-black mb-0.5", notif.is_read ? "text-slate-500" : "text-slate-900 dark:text-white")}>{notif.title}</p>
+                                            <p className="text-[10px] font-bold text-slate-500 line-clamp-2">{notif.message}</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className="text-xs font-black text-slate-900 dark:text-white">Order Delivered</p>
-                                        <p className="text-[10px] font-bold text-slate-500">Your MTN 3GB plan is active.</p>
-                                    </div>
-                                </div>
+                                ))}
                             </div>
                             <Link
                                 to="/dashboard/notifications"
