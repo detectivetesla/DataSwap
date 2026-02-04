@@ -125,8 +125,8 @@ const AdminPage: React.FC = () => {
                                     <stat.icon className={cn("w-4 h-4 sm:w-5 sm:h-5", stat.color)} />
                                 </div>
                                 <div className="flex flex-col min-w-0">
-                                    <h3 className="text-lg sm:text-2xl font-black text-white truncate">{stat.value}</h3>
-                                    <p className="text-[9px] sm:text-[10px] font-black text-white/90 uppercase tracking-widest leading-none mt-1 truncate">{stat.label}</p>
+                                    <h3 className="text-lg sm:text-2xl font-black text-white leading-tight">{stat.value}</h3>
+                                    <p className="text-[9px] sm:text-[10px] font-black text-white/90 uppercase tracking-widest leading-tight mt-1">{stat.label}</p>
                                 </div>
                             </div>
                         )}

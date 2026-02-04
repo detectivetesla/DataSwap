@@ -91,7 +91,7 @@ const AdminOrdersPage: React.FC = () => {
                 ].map((stat) => (
                     <div key={stat.label} className={cn("border-2 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] flex items-center justify-between shadow-lg transition-all hover:scale-105 group", stat.bg, "border-white/10")}>
                         <div className="min-w-0">
-                            <p className="text-[9px] sm:text-[10px] font-black uppercase text-white/90 tracking-widest truncate">{stat.label}</p>
+                            <p className="text-[9px] sm:text-[10px] font-black uppercase text-white/90 tracking-widest leading-tight">{stat.label}</p>
                             <p className="text-lg sm:text-2xl font-black text-white mt-1">{stat.value}</p>
                         </div>
                         <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
