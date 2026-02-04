@@ -57,6 +57,33 @@ const portal02Service = {
     },
 
     /**
+     * Purchase data bundles for multiple recipients (Bulk)
+     */
+    purchaseBulkData: async (network, items, offerSlug) => {
+        try {
+            const response = await axios.post(`${PORTAL02_BASE_URL}/order/${network.toLowerCase()}`, {
+                type: 'bulk',
+                items: items, // Array of { volume, recipient }
+                offerSlug: offerSlug,
+                webhookUrl: `${process.env.BACKEND_URL}/webhooks/portal02`
+            }, {
+                headers: { 'Authorization': `Bearer ${PORTAL02_API_KEY}` }
+            });
+            return response.data;
+        } catch (error) {
+            const providerError = error.response?.data;
+            if (providerError && providerError.success === false) {
+                console.warn(`Portal02 Bulk Error [${providerError.type}]: ${providerError.error}`);
+                const err = new Error(providerError.error);
+                err.type = providerError.type;
+                throw err;
+            }
+            console.error('Portal02 Bulk Purchase Error:', error.message);
+            throw error;
+        }
+    },
+
+    /**
      * Check the status of an order by ID or reference
      */
     checkOrderStatus: async (id) => {
