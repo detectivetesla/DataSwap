@@ -12,34 +12,34 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onMenuClick }) => {
     const { theme, toggleTheme } = useTheme();
 
     return (
-        <header className="h-20 lg:h-24 px-4 sm:px-8 flex items-center justify-between bg-white/80 dark:bg-[#0B0F19]/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-100 dark:border-white/5 gap-4">
-            <div className="flex items-center gap-3">
+        <header className="min-h-[5rem] lg:h-24 px-4 sm:px-8 flex flex-col md:flex-row md:items-center justify-between bg-white/80 dark:bg-[#0B0F19]/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-100 dark:border-white/5 gap-4 py-4 md:py-0">
+            <div className="flex items-center gap-3 flex-1">
                 <button
                     onClick={onMenuClick}
-                    className="p-3 rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/30 hover:scale-105 active:scale-95 transition-all"
+                    className="p-3 rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/30 hover:scale-105 active:scale-95 transition-all shrink-0"
                 >
                     <Menu className="w-5 h-5" />
                 </button>
-                <div className="flex items-center gap-3 px-4 py-2 bg-slate-100 dark:bg-white/5 rounded-2xl border border-slate-200 dark:border-white/10 shrink-0">
-                    <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center text-white font-black text-xs">
-                        TU
+                <div className="flex items-center gap-3 px-4 py-2 bg-slate-100 dark:bg-white/5 rounded-2xl border border-slate-200 dark:border-white/10 min-w-0">
+                    <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center text-white font-black text-xs shrink-0">
+                        {user?.fullName?.substring(0, 2).toUpperCase() || 'AD'}
                     </div>
-                    <div className="flex flex-col">
-                        <span className="text-xs font-black text-slate-900 dark:text-white leading-none">Welcome! {user?.fullName || 'Test User'}</span>
-                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter mt-1">Security is a process, not a product.</span>
+                    <div className="flex flex-col min-w-0">
+                        <span className="text-xs font-black text-slate-900 dark:text-white leading-none truncate">Welcome! {user?.fullName || 'Admin'}</span>
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter mt-1 truncate hidden xs:block">Security is a process, not a product.</span>
                     </div>
                 </div>
             </div>
 
             <div className="flex-1 max-w-xl hidden xl:block">
                 <div className="flex justify-center">
-                    <div className="px-6 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 font-black text-xs">
-                        {user?.email || 'test@mail.com'}
+                    <div className="px-6 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 font-black text-xs truncate">
+                        {user?.email || 'admin@dataswap.com'}
                     </div>
                 </div>
             </div>
 
-            <div className="flex items-center gap-3 sm:gap-4 ml-auto">
+            <div className="flex items-center gap-3 sm:gap-4 ml-auto w-full md:w-auto justify-end">
                 <div className="flex items-center gap-2">
                     <button className="relative p-2.5 rounded-xl bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors group">
                         <Mail className="w-5 h-5 text-slate-500 group-hover:scale-110 transition-transform" />
@@ -60,7 +60,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onMenuClick }) => {
                 </div>
 
                 <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-blue-500 flex items-center justify-center text-white ring-4 ring-slate-100 dark:ring-white/5 shadow-xl shrink-0 font-black">
-                    TU
+                    {user?.fullName?.substring(0, 2).toUpperCase() || 'AD'}
                 </div>
             </div>
         </header>
