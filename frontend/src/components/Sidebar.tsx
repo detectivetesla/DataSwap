@@ -98,7 +98,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onClose, isCollapsed }) =>
                         <Database className="text-white w-6 h-6 fill-white" />
                     </div>
                     {!isCollapsed && (
-                        <span className="text-2xl font-black tracking-tight text-slate-900 dark:text-white truncate">DataSwap.</span>
+                        <span className="text-2xl font-black tracking-tight text-slate-900 dark:text-white truncate">MaxHub.</span>
                     )}
                 </Link>
 

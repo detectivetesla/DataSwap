@@ -19,5 +19,5 @@ module.exports = {
     TRANSACTION_FEE_PERCENTAGE: parseFloat(process.env.TRANSACTION_FEE_PERCENTAGE) || 0.02,
     MIN_DEPOSIT_GHC: parseFloat(process.env.MIN_DEPOSIT_GHC) || 5.00,
     SYSTEM_CURRENCY: process.env.SYSTEM_CURRENCY || 'GH₵',
-    SYSTEM_NAME: process.env.SYSTEM_NAME || 'DataSwap'
+    SYSTEM_NAME: process.env.SYSTEM_NAME || 'MaxHub'
 };

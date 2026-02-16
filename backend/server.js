@@ -24,7 +24,7 @@ const messageRoutes = require('./routes/messages');
 
 // Health Check
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok', message: 'DataSwap Backend is running' });
+    res.json({ status: 'ok', message: 'MaxHub Backend is running' });
 });
 
 // API Routes

@@ -64,7 +64,7 @@ router.post('/register', async (req, res) => {
 
         await notificationService.createMessage({
             userId: result.rows[0].id,
-            title: 'Welcome to DataSwap!',
+            title: 'Welcome to MaxHub!',
             content: 'We are thrilled to have you here. You can now start buying data at the best rates in Ghana. If you have any questions, feel free to contact support.',
             sender: 'System Admin'
         });

@@ -19,7 +19,7 @@ const Settings: React.FC = () => {
     const sections = [
         {
             title: "Appearance",
-            description: "Customize how DataSwap looks on your device.",
+            description: "Customize how MaxHub looks on your device.",
             items: [
                 {
                     icon: theme === 'dark' ? Moon : Sun,

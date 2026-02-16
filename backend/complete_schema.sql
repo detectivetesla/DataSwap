@@ -1,5 +1,5 @@
 -- =============================================================================
--- DataSwap Complete Database Schema
+-- MaxHub Complete Database Schema
 -- Version: 1.0.0
 -- Last Updated: 2026-02-04
 -- Description: Complete schema for user and admin systems, including all 
@@ -215,7 +215,7 @@ INSERT INTO settings (key, value, description) VALUES
     ('min_deposit', '5', 'Minimum wallet deposit amount (GHC)'),
     ('max_deposit', '10000', 'Maximum wallet deposit amount (GHC)'),
     ('transaction_fee_percentage', '0.02', 'Platform transaction fee (2%)'),
-    ('support_email', 'support@dataswap.com', 'System support email'),
+    ('support_email', 'support@maxhub.com', 'System support email'),
     ('support_phone', '+233241234567', 'System support phone number')
 ON CONFLICT (key) DO NOTHING;
 

@@ -90,7 +90,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ type, onToggle }) => {
                     <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
                         <LayoutGrid className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                     </div>
-                    <span className="text-base sm:text-xl font-black text-white tracking-tighter">DataSwap</span>
+                    <span className="text-base sm:text-xl font-black text-white tracking-tighter">MaxHub</span>
                 </div>
 
                 <button className="hidden xs:flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-xs sm:text-sm font-bold text-slate-300">
@@ -133,7 +133,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ type, onToggle }) => {
                         <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
                             <LayoutGrid className="w-4 h-4 text-white" />
                         </div>
-                        <span className="text-xl font-black text-white tracking-tighter">DataSwap</span>
+                        <span className="text-xl font-black text-white tracking-tighter">MaxHub</span>
                     </div>
 
                     {/* Social Auth Buttons */}

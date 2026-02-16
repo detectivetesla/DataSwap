@@ -34,7 +34,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onMenuClick }) => {
             <div className="flex-1 max-w-xl hidden xl:block">
                 <div className="flex justify-center">
                     <div className="px-6 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 font-black text-xs truncate">
-                        {user?.email || 'admin@dataswap.com'}
+                        {user?.email || 'admin@maxhub.com'}
                     </div>
                 </div>
             </div>

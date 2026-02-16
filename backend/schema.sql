@@ -100,5 +100,5 @@ INSERT INTO settings (key, value, description) VALUES
 ('maintenance_mode', 'false', 'Disable all non-admin access'),
 ('public_registration', 'true', 'Allow new users to sign up'),
 ('min_deposit', '5', 'Minimum wallet deposit amount'),
-('support_email', 'support@dataswap.com', 'System support email')
+('support_email', 'support@maxhub.com', 'System support email')
 ON CONFLICT (key) DO NOTHING;
