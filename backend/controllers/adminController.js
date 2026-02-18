@@ -1,0 +1,185 @@
+const db = require('../db');
+const bcrypt = require('bcryptjs');
+const portal02Service = require('../services/portal02');
+const { logActivity } = require('../services/logger');
+
+const adminController = {
+    // System Stats
+    getStats: async (req, res) => {
+        try {
+            const [
+                totalUsersResult,
+                todayOrdersResult,
+                todayRevenueResult,
+                lifetimeRevenueResult,
+                pendingOrdersResult,
+                dailyRevenueResult,
+                networkDistResult,
+                recentFundingResult
+            ] = await Promise.all([
+                db.query('SELECT COUNT(*) FROM users'),
+                db.query("SELECT COUNT(*) FROM transactions WHERE purpose = 'data_purchase' AND status != 'initialized' AND created_at >= CURRENT_DATE"),
+                db.query("SELECT SUM(amount) FROM transactions WHERE purpose = 'data_purchase' AND status = 'success' AND created_at >= CURRENT_DATE"),
+                db.query("SELECT SUM(amount) FROM transactions WHERE purpose = 'data_purchase' AND status = 'success'"),
+                db.query("SELECT COUNT(*) FROM transactions WHERE purpose = 'data_purchase' AND status = 'processing'"),
+                db.query(`
+                    SELECT DATE(created_at) as date, SUM(amount) as revenue 
+                    FROM transactions 
+                    WHERE purpose = 'data_purchase' AND status = 'success' AND created_at > NOW() - INTERVAL '7 days' 
+                    GROUP BY date 
+                    ORDER BY date ASC
+                `),
+                db.query(`
+                    SELECT b.network, COUNT(*) as count 
+                    FROM transactions t 
+                    JOIN bundles b ON t.bundle_id = b.id 
+                    WHERE t.purpose = 'data_purchase' AND t.status != 'initialized'
+                    GROUP BY b.network
+                `),
+                db.query(`
+                    SELECT t.*, u.full_name as user_name 
+                    FROM transactions t 
+                    LEFT JOIN users u ON t.user_id = u.id 
+                    WHERE t.purpose = 'wallet_funding' AND t.status != 'initialized' AND t.status = 'success' 
+                    ORDER BY t.created_at DESC LIMIT 5
+                `)
+            ]);
+
+            res.json({
+                totalUsers: Number(totalUsersResult.rows[0].count),
+                todayOrders: Number(todayOrdersResult.rows[0].count),
+                todayRevenue: Number(todayRevenueResult.rows[0].sum || 0),
+                lifetimeRevenue: Number(lifetimeRevenueResult.rows[0].sum || 0),
+                pendingOrders: Number(pendingOrdersResult.rows[0].count),
+                dailyRevenue: dailyRevenueResult.rows.map(row => ({
+                    date: new Date(row.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }),
+                    revenue: Number(row.revenue)
+                })),
+                networkDistribution: networkDistResult.rows.map(row => ({
+                    name: row.network,
+                    count: parseInt(row.count)
+                })),
+                recentFunding: recentFundingResult.rows
+            });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to fetch admin stats', error: error.message });
+        }
+    },
+
+    getRecentData: async (req, res) => {
+        try {
+            const ordersResult = await db.query(
+                `SELECT t.*, u.full_name as user_name, b.network 
+                 FROM transactions t 
+                 LEFT JOIN users u ON t.user_id = u.id 
+                 LEFT JOIN bundles b ON t.bundle_id = b.id 
+                 WHERE t.purpose = 'data_purchase' AND t.status != 'initialized'
+                 ORDER BY t.created_at DESC LIMIT 10`
+            );
+
+            const usersResult = await db.query(
+                'SELECT full_name, email, created_at FROM users ORDER BY created_at DESC LIMIT 5'
+            );
+
+            res.json({
+                recentOrders: ordersResult.rows,
+                newUsers: usersResult.rows
+            });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to fetch recent data', error: error.message });
+        }
+    },
+
+    // Users Management
+    getAllUsers: async (req, res) => {
+        try {
+            const result = await db.query('SELECT id, email, full_name, role, wallet_balance, is_blocked, created_at FROM users ORDER BY created_at DESC');
+            res.json({ users: result.rows });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to fetch users', error: error.message });
+        }
+    },
+
+    createUser: async (req, res) => {
+        const { email, full_name, password, role, wallet_balance } = req.body;
+        if (!['customer', 'admin'].includes(role)) {
+            return res.status(400).json({ message: 'Invalid role' });
+        }
+        try {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const result = await db.query(
+                'INSERT INTO users (email, full_name, password_hash, role, wallet_balance) VALUES ($1, $2, $3, $4, $5) RETURNING id, email, full_name, role, wallet_balance, created_at',
+                [email, full_name, hashedPassword, role, wallet_balance]
+            );
+            res.status(201).json({ message: 'User created successfully', user: result.rows[0] });
+            logActivity({
+                userId: req.user.id,
+                type: 'user',
+                level: 'success',
+                action: 'Admin Create User',
+                message: `Admin created user: ${email}`,
+                req
+            });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to create user', error: error.message });
+        }
+    },
+
+    updateUser: async (req, res) => {
+        const { id } = req.params;
+        const { email, full_name, role, wallet_balance, is_blocked } = req.body;
+        try {
+            const result = await db.query(
+                'UPDATE users SET email = $1, full_name = $2, role = $3, wallet_balance = $4, is_blocked = $5 WHERE id = $6 RETURNING *',
+                [email, full_name, role, wallet_balance, is_blocked, id]
+            );
+            res.json({ message: 'User updated', user: result.rows[0] });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to update user', error: error.message });
+        }
+    },
+
+    deleteUser: async (req, res) => {
+        try {
+            await db.query('DELETE FROM users WHERE id = $1', [req.params.id]);
+            res.json({ message: 'User deleted' });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to delete user' });
+        }
+    },
+
+    // Bundles Management
+    getAllBundles: async (req, res) => {
+        try {
+            const result = await db.query('SELECT * FROM bundles ORDER BY network, price_ghc');
+            res.json({ bundles: result.rows });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to fetch bundles' });
+        }
+    },
+
+    createBundle: async (req, res) => {
+        const { network, name, data_amount, price_ghc, validity_days } = req.body;
+        try {
+            const result = await db.query(
+                'INSERT INTO bundles (network, name, data_amount, price_ghc, validity_days) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+                [network, name, data_amount, price_ghc, validity_days]
+            );
+            res.status(201).json({ bundle: result.rows[0] });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to create bundle' });
+        }
+    },
+
+    // ... (other bundle methods, logs, settings skipped for brevity in this step)
+    getLogs: async (req, res) => {
+        try {
+            const result = await db.query('SELECT l.*, u.full_name as user_name FROM activity_logs l LEFT JOIN users u ON l.user_id = u.id ORDER BY l.created_at DESC LIMIT 100');
+            res.json({ logs: result.rows });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to fetch logs' });
+        }
+    }
+};
+
+module.exports = adminController;

@@ -19,12 +19,15 @@ app.use(express.json({
 }));
 
 // Routes
-const authRoutes = require('./routes/auth');
-const adminRoutes = require('./routes/admin');
-const dashboardRoutes = require('./routes/dashboard');
-const webhookRoutes = require('./routes/webhooks');
-const notificationRoutes = require('./routes/notifications');
-const messageRoutes = require('./routes/messages');
+const authRoutes = require('./routes/auth.routes');
+const adminRoutes = require('./routes/admin.routes');
+const dashboardRoutes = require('./routes/dashboard.routes');
+const walletRoutes = require('./routes/wallet.routes');
+const orderRoutes = require('./routes/order.routes');
+const messageRoutes = require('./routes/message.routes');
+const notificationRoutes = require('./routes/notification.routes');
+const portal02Routes = require('./routes/portal02.routes');
+const webhookRoutes = require('./routes/webhooks'); // Keep for Paystack verify legacy or refactor later
 
 // Health Check
 app.get('/health', (req, res) => {
@@ -36,9 +39,12 @@ const apiRouter = express.Router();
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/admin', adminRoutes);
 apiRouter.use('/dashboard', dashboardRoutes);
-apiRouter.use('/webhooks', webhookRoutes);
-apiRouter.use('/notifications', notificationRoutes);
+apiRouter.use('/wallet', walletRoutes);
+apiRouter.use('/orders', orderRoutes);
 apiRouter.use('/messages', messageRoutes);
+apiRouter.use('/notifications', notificationRoutes);
+apiRouter.use('/portal02', portal02Routes);
+apiRouter.use('/webhooks', webhookRoutes);
 
 // Support both /api prefix and direct access
 app.use('/api', apiRouter);
