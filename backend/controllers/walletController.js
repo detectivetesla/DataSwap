@@ -4,19 +4,18 @@ const notificationService = require('../services/notificationService');
 const paystackService = require('../services/paystack');
 const CONFIG = require('../config/constants');
 
-// Initialize Deposit (Paystack)
 const initializeDeposit = async (req, res) => {
     try {
         const { amount } = req.body;
         const userId = req.user.id;
         const userEmail = req.user.email;
 
-        if (!amount || amount < CONFIG.MIN_DEPOSIT_GHC) {
-            return res.status(400).json({ message: `Minimum deposit amount is ${CONFIG.CURRENCY} ${CONFIG.MIN_DEPOSIT_GHC.toFixed(2)}` });
+        if (!amount || Number(amount) < CONFIG.MIN_DEPOSIT_GHC) {
+            return res.status(400).json({
+                message: `Minimum deposit amount is ${CONFIG.CURRENCY} ${CONFIG.MIN_DEPOSIT_GHC.toFixed(2)}`
+            });
         }
 
-        // Note: User asked to remove fees, so we set fee to 0 or use CONFIG if he changes his mind
-        // For now, let's keep it consistent with the "remove fees" request
         const fee = 0;
         const totalAmount = Number(amount) + Number(fee);
 
@@ -41,9 +40,14 @@ const initializeDeposit = async (req, res) => {
             fee,
             totalAmount
         });
+
     } catch (error) {
-        console.error('Deposit Init Error:', error);
-        res.status(500).json({ message: 'Failed to initialize deposit', error: error.message });
+        console.error('Deposit Init Error:', error.message);
+        res.status(500).json({
+            message: 'Failed to initialize deposit',
+            error: error.message,
+            paystackError: error.response?.data?.message
+        });
     }
 };
 
@@ -69,102 +73,149 @@ const getBalance = async (req, res) => {
     }
 };
 
-// Fund wallet (adapted from user snippet for PostgreSQL)
+// Shared logic for funding the wallet
+const fundWalletLogic = async (userId, amount, reference, req = null) => {
+    const client = await db.pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        // 1. Check if this reference has already been processed and is successful
+        const checkRef = await client.query(
+            'SELECT id FROM transactions WHERE reference = $1 AND status = \'success\'',
+            [reference]
+        );
+
+        if (checkRef.rows.length > 0) {
+            await client.query('COMMIT');
+            return { alreadyProcessed: true };
+        }
+
+        // 2. Update main wallet balance in users table
+        const updateResult = await client.query(
+            'UPDATE users SET wallet_balance = wallet_balance + $1 WHERE id = $2 RETURNING wallet_balance',
+            [amount, userId]
+        );
+
+        if (updateResult.rows.length === 0) {
+            throw new Error('User not found or balance update failed');
+        }
+
+        // 3. Update or Insert transaction status
+        // We use UPSERT because the webhook might arrive before the manual verify, or vice versa
+        await client.query(
+            `INSERT INTO transactions (user_id, type, purpose, amount, status, reference, payment_method)
+             VALUES ($1, 'credit', 'wallet_funding', $2, 'success', $3, 'paystack')
+             ON CONFLICT (reference) DO UPDATE SET status = 'success', amount = EXCLUDED.amount`,
+            [userId, amount, reference]
+        );
+
+        // 4. Update profiles if they exist and have wallet relevant info (Optional based on schema)
+        await client.query(
+            'UPDATE profiles SET last_login = NOW() WHERE id = $1',
+            [userId]
+        ).catch(() => { });
+
+        await client.query('COMMIT');
+
+        const newBalance = parseFloat(updateResult.rows[0].wallet_balance);
+
+        // Log activity
+        logActivity({
+            userId,
+            type: 'order',
+            level: 'success',
+            action: 'WALLET_FUND',
+            message: `Wallet funded with GHS ${Number(amount).toFixed(2)}`,
+            req
+        });
+
+        // Create notification
+        await notificationService.createNotification({
+            userId,
+            title: 'Wallet Funded',
+            message: `Successfully credited ${Number(amount).toFixed(2)} GHC to your wallet. Reference: ${reference}`,
+            type: 'success'
+        });
+
+        return { alreadyProcessed: false, newBalance };
+
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('Fund Wallet Logic Error:', error);
+        throw error;
+    } finally {
+        client.release();
+    }
+};
+
+// Webhook Handler or Manual Fund (usually called by verifyDeposit or webhooks)
 const fundWallet = async (req, res) => {
     try {
         const { amount, reference } = req.body;
+        const userId = req.user?.id || req.body.userId;
+
+        if (!amount || amount <= 0 || !reference) {
+            return res.status(400).json({ status: 'error', message: 'Valid amount and reference are required' });
+        }
+
+        const result = await fundWalletLogic(userId, amount, reference, req);
+
+        res.json({
+            status: 'success',
+            message: result.alreadyProcessed ? 'Deposit already processed' : 'Wallet funded successfully',
+            newBalance: result.newBalance
+        });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: 'Failed to fund wallet', details: error.message });
+    }
+};
+
+// Explicit Verification Handler (GET /verify/:reference)
+const verifyDeposit = async (req, res) => {
+    try {
+        const { reference } = req.params;
         const userId = req.user.id;
 
-        if (!amount || amount <= 0) {
-            return res.status(400).json({ error: 'Valid amount is required' });
+        if (!reference) {
+            return res.status(400).json({ status: 'error', message: 'Reference is required' });
         }
 
-        const client = await db.pool.connect();
-        try {
-            await client.query('BEGIN');
+        // 1. Verify with Paystack
+        const paystackData = await paystackService.verifyTransaction(reference);
 
-            // 1. Check if this reference has already been processed in transactions or deposits
-            const checkRef = await client.query(
-                'SELECT id FROM transactions WHERE reference = $1 AND status = \'success\'',
-                [reference]
-            );
-
-            if (checkRef.rows.length > 0) {
-                const userRes = await client.query('SELECT wallet_balance FROM users WHERE id = $1', [userId]);
-                await client.query('COMMIT');
-                return res.json({
-                    message: 'Deposit already processed',
-                    newBalance: parseFloat(userRes.rows[0].wallet_balance)
-                });
-            }
-
-            // 2. Note: The user asked to remove fees, so feePercentage is 0
-            const amountToCredit = Number(amount);
-
-            // 3. Update main wallet balance in users table
-            const updateResult = await client.query(
-                'UPDATE users SET wallet_balance = wallet_balance + $1 WHERE id = $2 RETURNING wallet_balance',
-                [amountToCredit, userId]
-            );
-
-            // 4. Update transaction status
-            await client.query(
-                'UPDATE transactions SET status = $1 WHERE reference = $2',
-                ['success', reference]
-            );
-
-            // 5. Update profiles and deposits (as sync/log tables if they exist)
-            // This mirrors the user's snippet logic but remains safe if tables are used by other processes
-            await client.query(
-                'UPDATE profiles SET last_login = NOW() WHERE id = $1',
-                [userId]
-            ).catch(() => { }); // Profiles might not have wallet_balance as we saw
-
-            await client.query(
-                'INSERT INTO deposits (user_id, amount, status, reference) VALUES ($1, $2, $3, $4) ON CONFLICT (reference) DO UPDATE SET status = $3',
-                [userId, amountToCredit, 'completed', reference]
-            ).catch(err => console.warn('Optional deposits table update skipped:', err.message));
-
-            await client.query('COMMIT');
-
-            const newBalance = parseFloat(updateResult.rows[0].wallet_balance);
-
-            res.json({
-                status: 'success',
-                message: 'Wallet funded successfully',
-                newBalance
+        if (paystackData.status !== 'success') {
+            return res.status(400).json({
+                status: 'error',
+                message: `Transaction is ${paystackData.status}. Reason: ${paystackData.gateway_response}`
             });
-
-            // Log activity
-            logActivity({
-                userId,
-                type: 'order',
-                level: 'success',
-                action: 'WALLET_FUND',
-                message: `Wallet funded with GHS ${amountToCredit.toFixed(2)}`,
-                req
-            });
-
-            await notificationService.createNotification({
-                userId,
-                title: 'Wallet Funded',
-                message: `Successfully credited ${amountToCredit.toFixed(2)} GHC to your wallet.`,
-                type: 'success'
-            });
-
-        } catch (error) {
-            await client.query('ROLLBACK');
-            throw error;
-        } finally {
-            client.release();
         }
+
+        // 2. Extract amount and metadata
+        const amountInGhc = paystackData.amount / 100;
+        let metadata = paystackData.metadata;
+        if (typeof metadata === 'string') metadata = JSON.parse(metadata);
+
+        // Ensure this transaction belongs to the requesting user (Security check)
+        if (metadata.user_id && metadata.user_id !== userId) {
+            return res.status(403).json({ status: 'error', message: 'Transaction ownership mismatch' });
+        }
+
+        // 3. Fund wallet using shared logic
+        const result = await fundWalletLogic(userId, amountInGhc, reference, req);
+
+        // 4. Get latest balance for response
+        const userRes = await db.query('SELECT wallet_balance FROM users WHERE id = $1', [userId]);
+        const latestBalance = parseFloat(userRes.rows[0].wallet_balance);
+
+        res.json({
+            status: 'success',
+            message: result.alreadyProcessed ? 'Deposit already confirmed' : 'Transaction verified and wallet funded!',
+            newBalance: latestBalance
+        });
 
     } catch (error) {
-        console.error('Fund wallet error details:', error);
-        res.status(500).json({
-            error: 'Failed to fund wallet',
-            details: error.message
-        });
+        console.error('Verify Deposit Error:', error);
+        res.status(500).json({ status: 'error', message: 'Verification failed', details: error.message });
     }
 };
 
@@ -206,4 +257,4 @@ const getTransactions = async (req, res) => {
     }
 };
 
-module.exports = { initializeDeposit, getBalance, fundWallet, getDeposits, getTransactions };
+module.exports = { initializeDeposit, getBalance, fundWallet, getDeposits, getTransactions, verifyDeposit };

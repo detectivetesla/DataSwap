@@ -69,60 +69,9 @@ router.post('/paystack', verifyPaystackSignature, async (req, res) => {
     }
 });
 
+const portal02Controller = require('../controllers/portal02Controller');
+
 // Portal02 Webhook
-router.post('/portal02', async (req, res) => {
-    const { event, orderId, reference, status, recipient, volume } = req.body;
-
-    if (event === 'order.status.updated') {
-        console.log(`Portal02 Webhook: Order ${reference} (${orderId}) for ${recipient} updated to: ${status}`);
-
-        try {
-            // Map Portal02 status to local status
-            let localStatus = 'processing';
-            if (status === 'delivered') localStatus = 'success';
-            if (['failed', 'cancelled', 'refunded'].includes(status)) localStatus = 'failed';
-
-            // Update transaction status
-            // We try to match by reference first, then orderId (just in case)
-            await db.query(
-                'UPDATE transactions SET status = $1, metadata = metadata || $2 WHERE reference = $3 OR reference = $4',
-                [localStatus, JSON.stringify({ portal_order_id: orderId, portal_status: status }), reference, orderId]
-            );
-
-            logActivity({
-                type: 'order',
-                level: localStatus === 'success' ? 'success' : (localStatus === 'failed' ? 'error' : 'info'),
-                action: 'Order Status Update',
-                message: `Portal02 Order ${reference} updated to ${status} (${localStatus})`
-            });
-
-            // Fetch user_id for this transaction to send notification
-            const txInfo = await db.query('SELECT user_id, amount, metadata FROM transactions WHERE reference = $1 OR reference = $2', [reference, orderId]);
-            if (txInfo.rows.length > 0) {
-                const userId = txInfo.rows[0].user_id;
-                const metadata = txInfo.rows[0].metadata || {};
-                await notificationService.createNotification({
-                    userId,
-                    title: localStatus === 'success' ? 'Order Successful' : (localStatus === 'failed' ? 'Order Failed' : 'Order Update'),
-                    message: localStatus === 'success'
-                        ? `Your order for ${metadata.bundle_name || 'data'} has been completed successfully.`
-                        : (localStatus === 'failed' ? `Your order for ${metadata.bundle_name || 'data'} failed. Please contact support.` : `Your order status is now ${status}.`),
-                    type: localStatus === 'success' ? 'success' : (localStatus === 'failed' ? 'error' : 'info')
-                });
-            }
-
-            // TODO: If failed/refunded, initiate a manual or automatic refund to wallet balance
-            if (localStatus === 'failed') {
-                console.warn(`ORDER FAILED: ${reference}. Consider refunding user.`);
-            }
-
-        } catch (error) {
-            console.error('Portal02 Webhook Processing Error:', error);
-            return res.status(500).json({ message: 'Internal server error' });
-        }
-    }
-
-    res.sendStatus(200);
-});
+router.post('/portal02', portal02Controller.handleWebhook);
 
 module.exports = router;

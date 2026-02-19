@@ -59,10 +59,7 @@ const orderController = {
             await client.query('COMMIT');
 
             try {
-                const volume = parseInt(bundle.data_amount) || 0;
-                const network = bundle.network.toLowerCase();
-                const offerSlug = bundle.provider_code;
-                await portal02Service.purchaseData(network, volume, phoneNumber, offerSlug);
+                await portal02Service.purchaseData(bundle.network, bundle.data_amount, phoneNumber, bundle.provider_code, reference);
 
                 res.json({ message: 'Purchase initiated', reference });
 
