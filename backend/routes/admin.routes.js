@@ -18,6 +18,8 @@ router.put('/users/:id', adminController.updateUser);
 router.delete('/users/:id', adminController.deleteUser);
 router.get('/bundles', adminController.getAllBundles);
 router.post('/bundles', adminController.createBundle);
+router.put('/bundles/:id', adminController.updateBundle);
+router.delete('/bundles/:id', adminController.deleteBundle);
 router.get('/orders', adminController.getAllOrders);
 router.get('/transactions', adminController.getAllTransactions);
 router.get('/send-message', adminController.sendMessage);

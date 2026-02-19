@@ -207,15 +207,44 @@ const adminController = {
     },
 
     createBundle: async (req, res) => {
-        const { network, name, data_amount, price_ghc, validity_days } = req.body;
+        const { network, name, data_amount, price_ghc, validity_days, provider_code, is_active, is_popular } = req.body;
         try {
             const result = await db.query(
-                'INSERT INTO bundles (network, name, data_amount, price_ghc, validity_days) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-                [network, name, data_amount, price_ghc, validity_days]
+                'INSERT INTO bundles (network, name, data_amount, price_ghc, validity_days, provider_code, is_active, is_popular) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+                [network, name, data_amount, price_ghc, validity_days || 30, provider_code, is_active ?? true, is_popular ?? false]
             );
             res.status(201).json({ bundle: result.rows[0] });
         } catch (error) {
-            res.status(500).json({ message: 'Failed to create bundle' });
+            res.status(500).json({ message: 'Failed to create bundle', error: error.message });
+        }
+    },
+
+    updateBundle: async (req, res) => {
+        const { id } = req.params;
+        const { network, name, data_amount, price_ghc, validity_days, provider_code, is_active, is_popular } = req.body;
+        try {
+            const result = await db.query(
+                `UPDATE bundles 
+                 SET network = $1, name = $2, data_amount = $3, price_ghc = $4, 
+                     validity_days = $5, provider_code = $6, is_active = $7, is_popular = $8 
+                 WHERE id = $9 RETURNING *`,
+                [network, name, data_amount, price_ghc, validity_days, provider_code, is_active, is_popular, id]
+            );
+            if (result.rows.length === 0) return res.status(404).json({ message: 'Bundle not found' });
+            res.json({ message: 'Bundle updated', bundle: result.rows[0] });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to update bundle', error: error.message });
+        }
+    },
+
+    deleteBundle: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const result = await db.query('DELETE FROM bundles WHERE id = $1 RETURNING *', [id]);
+            if (result.rows.length === 0) return res.status(404).json({ message: 'Bundle not found' });
+            res.json({ message: 'Bundle deleted' });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to delete bundle', error: error.message });
         }
     },
 
