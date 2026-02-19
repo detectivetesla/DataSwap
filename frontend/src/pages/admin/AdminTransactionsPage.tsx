@@ -385,7 +385,6 @@ const AdminTransactionsPage: React.FC = () => {
                                 Audit Log
                             </Button>
                             <Button
-                                variant="destructive"
                                 className="p-4 rounded-2xl aspect-square bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all shadow-none"
                             >
                                 <XCircle className="w-5 h-5" />
