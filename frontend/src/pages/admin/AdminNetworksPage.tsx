@@ -345,7 +345,9 @@ const AdminNetworksPage: React.FC = () => {
 
                                 {/* Custom Label */}
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Network Label</label>
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                                        Network Label
+                                    </label>
                                     <input
                                         type="text"
                                         value={modalData.label}
