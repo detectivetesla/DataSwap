@@ -11,12 +11,18 @@ process.env.JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key';
 const app = express();
 const server = http.createServer(app);
 
+// Middleware
+const checkMaintenanceMode = require('./middleware/maintenance');
+
 app.use(cors());
 app.use(express.json({
     verify: (req, res, buf) => {
         req.rawBody = buf;
     }
 }));
+
+// Apply maintenance check early
+app.use(checkMaintenanceMode);
 
 // Routes
 const authRoutes = require('./routes/auth.routes');

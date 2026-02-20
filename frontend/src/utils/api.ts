@@ -25,11 +25,16 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response && error.response.status === 401) {
-            // Clear local storage and redirect to login if unauthorized
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
+        if (error.response) {
+            if (error.response.status === 401) {
+                // Clear local storage and redirect to login if unauthorized
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+            } else if (error.response.status === 503) {
+                // Redirect to maintenance page
+                window.location.href = '/maintenance';
+            }
         }
         return Promise.reject(error);
     }

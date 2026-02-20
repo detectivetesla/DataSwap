@@ -7,6 +7,22 @@ const notificationService = require('../services/notificationService');
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key';
 
 const authController = {
+    // Get public system config
+    getPublicConfig: async (req, res) => {
+        try {
+            const settingsResult = await db.query(
+                "SELECT key, value FROM settings WHERE key IN ('public_registration', 'maintenance_mode')"
+            );
+            const config = settingsResult.rows.reduce((acc, row) => {
+                acc[row.key] = row.value === 'true';
+                return acc;
+            }, {});
+            res.json(config);
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to fetch config' });
+        }
+    },
+
     // Get current user info
     getMe: async (req, res) => {
         try {
@@ -31,6 +47,12 @@ const authController = {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!email || !emailRegex.test(email)) {
                 return res.status(400).json({ message: 'Please provide a valid email address' });
+            }
+
+            // Check if public registration is enabled
+            const settingsResult = await db.query("SELECT value FROM settings WHERE key = 'public_registration'");
+            if (settingsResult.rows.length > 0 && settingsResult.rows[0].value === 'false') {
+                return res.status(403).json({ message: 'Public registration is currently disabled.' });
             }
 
             const userExists = await db.query('SELECT * FROM users WHERE email = $1', [email]);

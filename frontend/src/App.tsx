@@ -14,6 +14,7 @@ import AdminOrdersPage from '@/pages/admin/AdminOrdersPage';
 import AdminLogin from '@/pages/admin/AdminLogin';
 import TermsPage from '@/pages/TermsPage';
 import PrivacyPage from '@/pages/PrivacyPage';
+import MaintenancePage from '@/pages/MaintenancePage';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import AdminLayout from '@/components/admin/AdminLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -87,6 +88,7 @@ const AppRoutes: React.FC = () => {
             </Route>
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/maintenance" element={<MaintenancePage />} />
             {/* Catch-all redirect to login */}
             <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>

@@ -519,6 +519,39 @@ const adminController = {
         }
     },
 
+    // System Settings Management
+    getSettings: async (req, res) => {
+        try {
+            const result = await db.query('SELECT key, value FROM settings');
+            const settings = result.rows.reduce((acc, row) => {
+                acc[row.key] = row.value;
+                return acc;
+            }, {});
+            res.json({ settings });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to fetch settings', error: error.message });
+        }
+    },
+
+    updateSettings: async (req, res) => {
+        const { key, value } = req.body;
+        try {
+            await db.query(
+                'INSERT INTO settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = $2',
+                [key, value]
+            );
+
+            await db.query(
+                'INSERT INTO activity_logs (user_id, type, action) VALUES ($1, $2, $3)',
+                [req.user.id, 'system', `Updated system setting: ${key} to ${value}`]
+            );
+
+            res.json({ message: 'Setting updated successfully' });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to update setting', error: error.message });
+        }
+    },
+
     syncAllOrders: async (req, res) => {
         try {
             const { page = 1, limit = 50 } = req.query;

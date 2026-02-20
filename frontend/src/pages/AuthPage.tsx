@@ -39,6 +39,27 @@ const AuthPage: React.FC<AuthPageProps> = ({ type, onToggle }) => {
         agreedToTerms: false
     });
     const [countryCode, setCountryCode] = useState('+233');
+    const [registrationEnabled, setRegistrationEnabled] = useState(true);
+
+    React.useEffect(() => {
+        const checkSettings = async () => {
+            try {
+                const response = await api.get('/auth/config');
+                // Check if public registration is disabled
+                if (response.data.public_registration === false) {
+                    setRegistrationEnabled(false);
+                    // If currently on signup and it's disabled, switch to signin
+                    if (type === 'signup') {
+                        onToggle();
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to check system config', error);
+            }
+        };
+
+        checkSettings();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -298,10 +319,17 @@ const AuthPage: React.FC<AuthPageProps> = ({ type, onToggle }) => {
                             {type === 'signin' ? "You haven't any account?" : "Already have an account?"}{' '}
                             <button
                                 onClick={onToggle}
-                                className="text-primary font-bold hover:underline transition-all"
+                                className={cn(
+                                    "text-primary font-bold hover:underline transition-all",
+                                    !registrationEnabled && type === 'signin' && "hidden"
+                                )}
+                                disabled={!registrationEnabled && type === 'signin'}
                             >
                                 {type === 'signin' ? 'Sign Up' : 'Sign In'}
                             </button>
+                            {!registrationEnabled && type === 'signin' && (
+                                <span className="text-slate-500 text-xs ml-2">(Registration Closed)</span>
+                            )}
                         </p>
                     </div>
                 </div>

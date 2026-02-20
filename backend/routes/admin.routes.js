@@ -11,6 +11,8 @@ const adminOnly = (req, res, next) => {
 router.use(authMiddleware, adminOnly);
 
 router.get('/stats', adminController.getStats);
+router.get('/settings', adminController.getSettings);
+router.post('/settings', adminController.updateSettings);
 router.get('/recent-data', adminController.getRecentData);
 router.get('/users', adminController.getAllUsers);
 router.post('/users', adminController.createUser);
