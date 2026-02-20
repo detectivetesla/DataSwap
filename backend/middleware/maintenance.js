@@ -7,9 +7,9 @@ const checkMaintenanceMode = async (req, res, next) => {
         // Normalize path to handle /api prefix
         const path = req.path.replace(/^\/api/, '');
 
-        // Skip for auth routes (login/register) and explicit admin routes
-        // We verify admin status via token below for other routes, but /admin routes should be accessible
-        if (path.startsWith('/auth') || path.startsWith('/admin')) {
+        // ALWAYS allow authentication routes and admin login attempts
+        // We check for 'login' in the path to catch dynamic admin login paths (e.g., /Emm@1207/login)
+        if (path.startsWith('/auth') || path.startsWith('/admin') || path.includes('/login')) {
             return next();
         }
 
