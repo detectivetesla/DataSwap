@@ -1,19 +1,35 @@
 const db = require('../db');
 
+const jwt = require('jsonwebtoken');
+
 const checkMaintenanceMode = async (req, res, next) => {
     try {
-        // Skip for admin login/auth routes to ensure admins can always login
-        // Also skip for static files or specific system routes if needed
-        if (req.path.startsWith('/auth') || req.path.startsWith('/admin')) {
+        // Normalize path to handle /api prefix
+        const path = req.path.replace(/^\/api/, '');
+
+        // Skip for auth routes (login/register) and explicit admin routes
+        // We verify admin status via token below for other routes, but /admin routes should be accessible
+        if (path.startsWith('/auth') || path.startsWith('/admin')) {
             return next();
         }
 
         const result = await db.query('SELECT value FROM settings WHERE key = $1', ['maintenance_mode']);
 
         if (result.rows.length > 0 && result.rows[0].value === 'true') {
-            // Check if user is admin (if authenticated)
-            if (req.user && req.user.role === 'admin') {
-                return next();
+            // Check if user is admin via token
+            const authHeader = req.headers.authorization;
+            if (authHeader) {
+                const token = authHeader.split(' ')[1];
+                if (token) {
+                    try {
+                        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_super_secret_jwt_key');
+                        if (decoded.role === 'admin') {
+                            return next();
+                        }
+                    } catch (err) {
+                        // Token invalid/expired, treat as normal user
+                    }
+                }
             }
 
             return res.status(503).json({
