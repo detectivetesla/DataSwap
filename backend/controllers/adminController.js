@@ -177,22 +177,86 @@ const adminController = {
         const { id } = req.params;
         const { email, full_name, role, wallet_balance, is_blocked } = req.body;
         try {
+            // Guard: Prevent de-admining oneself
+            if (id === req.user.id && role && role !== 'admin') {
+                return res.status(400).json({ message: 'You cannot remove your own administrator status.' });
+            }
+
             const result = await db.query(
-                'UPDATE users SET email = $1, full_name = $2, role = $3, wallet_balance = $4, is_blocked = $5 WHERE id = $6 RETURNING *',
+                'UPDATE users SET email = $1, full_name = $2, role = $3, wallet_balance = $4, is_blocked = $5 WHERE id = $6 RETURNING id, email, full_name, role, wallet_balance, is_blocked, created_at',
                 [email, full_name, role, wallet_balance, is_blocked, id]
             );
-            res.json({ message: 'User updated', user: result.rows[0] });
+
+            if (result.rows.length === 0) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            res.json({ message: 'User updated successfully', user: result.rows[0] });
         } catch (error) {
+            console.error('Update User Error:', error);
             res.status(500).json({ message: 'Failed to update user', error: error.message });
         }
     },
 
-    deleteUser: async (req, res) => {
+    toggleUserBlock: async (req, res) => {
+        const { id } = req.params;
         try {
-            await db.query('DELETE FROM users WHERE id = $1', [req.params.id]);
-            res.json({ message: 'User deleted' });
+            // Guard: Prevent blocking oneself
+            if (id === req.user.id) {
+                return res.status(400).json({ message: 'You cannot block your own account.' });
+            }
+
+            const userResult = await db.query('SELECT is_blocked FROM users WHERE id = $1', [id]);
+            if (userResult.rows.length === 0) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            const newStatus = !userResult.rows[0].is_blocked;
+            await db.query('UPDATE users SET is_blocked = $1 WHERE id = $2', [newStatus, id]);
+
+            res.json({ message: `User ${newStatus ? 'blocked' : 'unblocked'} successfully`, is_blocked: newStatus });
+
+            logActivity({
+                userId: req.user.id,
+                type: 'user',
+                level: 'warning',
+                action: 'Admin Block Toggle',
+                message: `Admin ${newStatus ? 'blocked' : 'unblocked'} user ID: ${id}`,
+                req
+            });
         } catch (error) {
-            res.status(500).json({ message: 'Failed to delete user' });
+            console.error('Toggle Block Error:', error);
+            res.status(500).json({ message: 'Failed to toggle block status', error: error.message });
+        }
+    },
+
+    deleteUser: async (req, res) => {
+        const { id } = req.params;
+        try {
+            // Guard: Prevent deleting oneself
+            if (id === req.user.id) {
+                return res.status(400).json({ message: 'Security Breach: You cannot delete your own administrator account.' });
+            }
+
+            const result = await db.query('DELETE FROM users WHERE id = $1 RETURNING email', [id]);
+
+            if (result.rowCount === 0) {
+                return res.status(404).json({ message: 'User not found or already deleted.' });
+            }
+
+            res.json({ message: 'User deleted successfully' });
+
+            logActivity({
+                userId: req.user.id,
+                type: 'user',
+                level: 'danger',
+                action: 'Admin Delete User',
+                message: `Admin deleted user: ${result.rows[0].email}`,
+                req
+            });
+        } catch (error) {
+            console.error('Delete User Error:', error);
+            res.status(500).json({ message: 'Failed to delete user. They may have active transactions or dependencies.', error: error.message });
         }
     },
 

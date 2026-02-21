@@ -17,6 +17,7 @@ router.get('/recent-data', adminController.getRecentData);
 router.get('/users', adminController.getAllUsers);
 router.post('/users', adminController.createUser);
 router.put('/users/:id', adminController.updateUser);
+router.post('/users/:id/toggle-block', adminController.toggleUserBlock);
 router.delete('/users/:id', adminController.deleteUser);
 router.get('/bundles', adminController.getAllBundles);
 router.post('/bundles', adminController.createBundle);
