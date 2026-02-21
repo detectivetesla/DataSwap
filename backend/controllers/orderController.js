@@ -26,6 +26,8 @@ const orderController = {
         const { bundleId, phoneNumber, isRecurring } = req.body;
         const userId = req.user.id;
 
+        console.log(`🛒 [Order Controller] New request: User=${userId}, Bundle=${bundleId}, Phone=${phoneNumber}`);
+
         if (!bundleId || !phoneNumber) {
             return res.status(400).json({ message: 'Bundle ID and Phone Number are required' });
         }
@@ -79,7 +81,18 @@ const orderController = {
             });
 
         } catch (error) {
+            console.error('❌ [Order Controller] Transaction Error:', error);
             if (client) await client.query('ROLLBACK');
+
+            logActivity({
+                userId: req.user.id,
+                type: 'order',
+                level: 'error',
+                action: 'Purchase Failed',
+                message: `Order failed: ${error.message}`,
+                req
+            });
+
             res.status(500).json({ message: 'Transaction failed', error: error.message });
         } finally {
             if (client) client.release();
